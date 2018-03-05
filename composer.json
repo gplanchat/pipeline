@@ -1,0 +1,20 @@
+{
+    "name": "kiboko/pipeline",
+    "type": "library",
+    "require-dev": {
+        "phpspec/phpspec": "^4.3"
+    },
+    "authors": [
+        {
+            "name": "Grégory Planchat",
+            "email": "gregory@kiboko.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Kiboko\\Component\\Pipeline\\": "src/"
+        }
+    }
+}
