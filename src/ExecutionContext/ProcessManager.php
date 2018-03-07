@@ -55,26 +55,50 @@ class ProcessManager implements ProcessManagerInterface
         return $this;
     }
 
-    public function run(callable $loopController): ProcessManagerInterface
+    private function pickFromPendingProcesses(int $processesToStart): \SplObjectStorage
     {
-        do {
-            if ($this->count() <= 0) {
+        $newProcesses = new \SplObjectStorage();
+        foreach ($this->pendingProcesses as $process) {
+            $callback = $this->pendingProcesses->offsetGet($process);
+            $newProcesses->attach($process, $callback);
+
+            if (--$processesToStart <= 0) {
                 break;
             }
+        }
 
+        $this->pendingProcesses->removeAll($newProcesses);
+
+        return $newProcesses;
+    }
+
+    private function probeAndPickStoppedProcesses(): \SplObjectStorage
+    {
+        $stoppedProcesses = new \SplObjectStorage();
+        foreach ($this->currentProcesses as $process) {
+            if ($process->isRunning()) {
+                continue;
+            }
+
+            $callback = $this->currentProcesses->offsetGet($process);
+            $stoppedProcesses->attach($process, $callback);
+
+            if ($callback !== null) {
+                $callback($this, $process);
+            }
+        }
+
+        $this->currentProcesses->removeAll($stoppedProcesses);
+
+        return $stoppedProcesses;
+    }
+
+    public function run(callable $loopController): ProcessManagerInterface
+    {
+        while (true) {
             $processesToStart = $this->maxProcesses - $this->currentProcesses->count();
             if ($processesToStart > 0) {
-                $newProcesses = new \SplObjectStorage();
-                foreach ($this->pendingProcesses as $process) {
-                    $callback = $this->pendingProcesses->offsetGet($process);
-                    $this->pendingProcesses->detach($process);
-
-                    $newProcesses->attach($process, $callback);
-
-                    if (--$processesToStart <= 0) {
-                        break;
-                    }
-                }
+                $newProcesses = $this->pickFromPendingProcesses($processesToStart);
                 $this->startProcesses($newProcesses);
 
                 $this->currentProcesses->addAll($newProcesses);
@@ -82,22 +106,19 @@ class ProcessManager implements ProcessManagerInterface
 
             usleep($this->pollTime);
 
-            $stoppedProcesses = [];
-            foreach ($this->currentProcesses as $process) {
-                if ($process->isRunning()) {
-                    continue;
+            $stoppedProcesses = $this->probeAndPickStoppedProcesses();
+
+            if ($loopController($this, iterator_to_array($stoppedProcesses), $this->count()) === false) {
+                foreach ($this->currentProcesses as $process) {
+                    $process->stop(10, SIGSTOP);
                 }
-
-                $callback = $this->currentProcesses->offsetGet($process);
-                $this->currentProcesses->detach($process);
-
-                if ($callback !== null) {
-                    $callback($this, $process);
-                }
-
-                $stoppedProcesses[] = $process;
+                break;
             }
-        } while ($loopController($this, $stoppedProcesses));
+
+            if ($this->count() <= 0) {
+                break;
+            }
+        }
 
         return $this;
     }

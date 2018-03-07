@@ -10,7 +10,6 @@ use Kiboko\Component\Pipeline\Plumbing\StepChainInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
 use Kiboko\Component\Pipeline\Processor\ProcessorInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PipelineSpec extends ObjectBehavior
 {

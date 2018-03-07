@@ -3,7 +3,7 @@
 namespace Kiboko\Component\Pipeline\Plumbing;
 
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManager;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessManagerInterface;
 
 class StepChain implements StepChainInterface
 {
@@ -33,13 +33,13 @@ class StepChain implements StepChainInterface
     }
 
     /**
-     * @param ProcessManager $processManager
+     * @param ProcessManagerInterface $processManager
      * @param ExecutionContextInterface $executionContext
      *
      * @return ExecutionContextInterface
      */
     public function __invoke(
-        ProcessManager $processManager,
+        ProcessManagerInterface $processManager,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         foreach ($this->steps as $step) {

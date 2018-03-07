@@ -2,7 +2,8 @@
     "name": "kiboko/pipeline",
     "type": "library",
     "require-dev": {
-        "phpspec/phpspec": "^4.3"
+        "phpspec/phpspec": "^3.0",
+        "phpunit/phpunit": "^7.1@dev"
     },
     "authors": [
         {
@@ -11,7 +12,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "symfony/process": "^2.8"
+    },
     "autoload": {
         "psr-4": {
             "Kiboko\\Component\\Pipeline\\": "src/"

@@ -60,6 +60,8 @@ class StepExecution implements StepExecutionInterface
         } catch (\Throwable $e) {
             $this->executionFailure = $this->executionFailureBuilder->build($e);
         }
+
+        return $executionContext;
     }
 
     /**
