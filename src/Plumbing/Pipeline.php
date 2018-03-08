@@ -48,10 +48,10 @@ class Pipeline implements PipelineInterface
      *
      * @return PipelineExecutionInterface
      */
-    public function __invoke(
+    public function run(
         ExecutionContextInterface $executionContext,
         ProcessorInterface $processor
     ): PipelineExecutionInterface {
-        return $processor->process($executionContext, $this->stepChain);
+        return $processor->run($executionContext, $this->stepChain);
     }
 }

@@ -6,8 +6,8 @@ use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionFailure\ExecutionFailureBuilder;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionFailure\ExecutionFailureChainInterface;
 use Kiboko\Component\Pipeline\ExecutionContext\PipelineExecutionInterface;
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManager;
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManagerInterface;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisor;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\ExecutionContext\StepExecution;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
 use PhpSpec\ObjectBehavior;
@@ -28,7 +28,7 @@ class StepExecutionSpec extends ObjectBehavior
         PipelineExecutionInterface $pipelineExecution,
         StepInterface $step,
         ExecutionFailureBuilder $executionFailureBuilder,
-        ProcessManagerInterface $processManager,
+        ProcessHypervisorInterface $processManager,
         ExecutionContextInterface $executionContext,
         ExecutionFailureChainInterface $executionFailureChain
     ) {
@@ -37,7 +37,7 @@ class StepExecutionSpec extends ObjectBehavior
         $executionFailureBuilder->build(Argument::type(\Exception::class))
             ->willReturn($executionFailureChain);
 
-        $step->__invoke($processManager->getWrappedObject(), $executionFailureBuilder->getWrappedObject())
+        $step->run($processManager->getWrappedObject(), $executionFailureBuilder->getWrappedObject())
             ->willReturn($executionContext);
 
         $this->execute($processManager->getWrappedObject(), $executionContext->getWrappedObject())

@@ -3,7 +3,7 @@
 namespace Kiboko\Component\Pipeline\Plumbing;
 
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManagerInterface;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisorInterface;
 
 class StepGroup implements StepGroupInterface
 {
@@ -33,17 +33,17 @@ class StepGroup implements StepGroupInterface
     }
 
     /**
-     * @param ProcessManagerInterface $processManager
+     * @param ProcessHypervisorInterface $processManager
      * @param ExecutionContextInterface $executionContext
      *
      * @return ExecutionContextInterface
      */
-    public function __invoke(
-        ProcessManagerInterface $processManager,
+    public function run(
+        ProcessHypervisorInterface $processManager,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         foreach ($this->steps as $step) {
-            $step($processManager, $executionContext);
+            $step->run($processManager, $executionContext);
         }
 
         return $executionContext;

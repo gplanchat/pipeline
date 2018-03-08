@@ -2,7 +2,7 @@
 
 namespace test\Kiboko\Component\Pipeline\ExecutionContext;
 
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManager;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
@@ -48,7 +48,7 @@ class ProcessManagerTest extends TestCase
 
     public function testRunningProcesses()
     {
-        $manager = new ProcessManager(2);
+        $manager = new ProcessHypervisor(2);
 
         $manager->enqueue(
             $longRunningProcess = $this->buildRunningProcessMock(2)
@@ -64,6 +64,10 @@ class ProcessManagerTest extends TestCase
             ->method('__invoke')
             ->willReturn(true);
 
+        $callback->expects($this->at(0))
+            ->method('__invoke')
+            ->with($manager, []);
+
         $callback->expects($this->at(1))
             ->method('__invoke')
             ->with($manager, [$shortRunningProcess]);
@@ -77,7 +81,7 @@ class ProcessManagerTest extends TestCase
 
     public function testInterruptedProcesses()
     {
-        $manager = new ProcessManager();
+        $manager = new ProcessHypervisor();
 
         $manager->enqueue(
             $longRunningProcess = $this->buildRunningProcessMock(1, true)
@@ -101,7 +105,7 @@ class ProcessManagerTest extends TestCase
 
     public function testPendingProcesses()
     {
-        $manager = new ProcessManager(2);
+        $manager = new ProcessHypervisor(2);
 
         $manager->enqueue(
             $firstProcess = $this->buildRunningProcessMock(2)

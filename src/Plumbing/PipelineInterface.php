@@ -14,7 +14,7 @@ interface PipelineInterface
      *
      * @return PipelineExecutionInterface
      */
-    public function __invoke(
+    public function run(
         ExecutionContextInterface $executionContext,
         ProcessorInterface $processor
     ): PipelineExecutionInterface;

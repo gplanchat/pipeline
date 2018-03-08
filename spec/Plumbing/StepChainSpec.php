@@ -3,7 +3,7 @@
 namespace spec\Kiboko\Component\Pipeline\Plumbing;
 
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManager;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisor;
 use Kiboko\Component\Pipeline\Plumbing\StepChain;
 use Kiboko\Component\Pipeline\Plumbing\StepChainInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
@@ -38,21 +38,21 @@ class StepChainSpec extends ObjectBehavior
     function it_can_execute_steps(
         StepInterface $step1,
         StepInterface $step2,
-        ProcessManager $processManager,
+        ProcessHypervisor $processManager,
         ExecutionContextInterface $executionContext
     ) {
         $this->beConstructedWith($step1, $step2);
 
-        $step1->__invoke($processManager, $executionContext)
+        $step1->run($processManager, $executionContext)
             ->willReturn($executionContext);
-        $step2->__invoke($processManager, $executionContext)
+        $step2->run($processManager, $executionContext)
             ->willReturn($executionContext);
 
-        $this->callOnWrappedObject('__invoke', [$processManager, $executionContext]);
+        $this->run($processManager, $executionContext);
 
-        $step1->__invoke($processManager, $executionContext)
+        $step1->run($processManager, $executionContext)
             ->shouldHaveBeenCalled();
-        $step2->__invoke($processManager, $executionContext)
+        $step2->run($processManager, $executionContext)
             ->shouldHaveBeenCalled();
     }
 

@@ -15,7 +15,7 @@ interface ProcessorInterface
      *
      * @return PipelineExecutionInterface
      */
-    public function process(
+    public function run(
         ExecutionContextInterface $executionContext,
         StepChainInterface $stepChain
     ): PipelineExecutionInterface;

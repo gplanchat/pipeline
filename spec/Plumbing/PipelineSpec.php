@@ -41,7 +41,7 @@ class PipelineSpec extends ObjectBehavior
         StepInterface $step,
         PipelineExecutionInterface $pipelineExecution
     ) {
-        $processor->process($executionContext, $stepChain)
+        $processor->run($executionContext, $stepChain)
             ->shouldBeCalled()
             ->willReturn($pipelineExecution);
 
@@ -49,7 +49,7 @@ class PipelineSpec extends ObjectBehavior
             ->willReturn(new \ArrayIterator([$step->getWrappedObject()]));
 
         $this->beConstructedWith($stepChain);
-        $this->callOnWrappedObject('__invoke', [$executionContext, $processor])
+        $this->run($executionContext, $processor)
             ->shouldReturn($pipelineExecution);
     }
 }

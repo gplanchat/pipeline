@@ -2,23 +2,24 @@
 
 namespace spec\Kiboko\Component\Pipeline\ExecutionContext;
 
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManager;
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessManagerInterface;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisor;
+use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisorInterface;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use Symfony\Component\Process\Process;
 
-class ProcessManagerSpec extends ObjectBehavior
+class ProcessHypervisorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ProcessManagerInterface::class);
+        $this->shouldHaveType(ProcessHypervisorInterface::class);
     }
 
     function it_can_enqueue_one_process(
         Process $process
     ) {
         $this->enqueue($process)
-            ->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
 
         $this->count()
             ->shouldReturn(1);
@@ -28,7 +29,7 @@ class ProcessManagerSpec extends ObjectBehavior
         Process $process
     ) {
         $this->enqueue($process, function() {})
-            ->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
 
         $this->count()
             ->shouldReturn(1);
@@ -40,13 +41,13 @@ class ProcessManagerSpec extends ObjectBehavior
         Process $process3
     ) {
         $this->enqueue($process1)
-            ->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
 
         $this->enqueue($process2)
-            ->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
 
         $this->enqueue($process3)
-            ->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
 
         $this->count()
             ->shouldReturn(3);
@@ -59,10 +60,9 @@ class ProcessManagerSpec extends ObjectBehavior
         $process->isRunning()->willReturn(false);
 
         $this->enqueue($process)
-            ->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
 
-        $this->run(function() {
-            return true;
-        })->shouldReturnAnInstanceOf(ProcessManagerInterface::class);
+        $this->run(function() {return true;})
+            ->shouldReturnAnInstanceOf(ProcessHypervisorInterface::class);
     }
 }

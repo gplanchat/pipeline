@@ -8,13 +8,13 @@ use Kiboko\Component\Pipeline\Plumbing\StepInterface;
 interface StepExecutionInterface
 {
     /**
-     * @param ProcessManagerInterface $processManager
+     * @param ProcessHypervisorInterface $processManager
      * @param ExecutionContextInterface $executionContext
      *
      * @return ExecutionContextInterface
      */
     public function execute(
-        ProcessManagerInterface $processManager,
+        ProcessHypervisorInterface $processManager,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface;
 

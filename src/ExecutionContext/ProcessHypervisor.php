@@ -4,7 +4,7 @@ namespace Kiboko\Component\Pipeline\ExecutionContext;
 
 use Symfony\Component\Process\Process;
 
-class ProcessManager implements ProcessManagerInterface
+class ProcessHypervisor implements ProcessHypervisorInterface
 {
     /**
      * @var int
@@ -40,21 +40,31 @@ class ProcessManager implements ProcessManagerInterface
         $this->currentProcesses = new \SplObjectStorage();
     }
 
+    public function __destruct()
+    {
+        $this->stopProcesses($this->currentProcesses, 10, SIGSTOP);
+    }
+
     /**
      * @param Process $process
      * @param callable|null $callback
      *
-     * @return ProcessManagerInterface
+     * @return ProcessHypervisorInterface
      */
     public function enqueue(
         Process $process,
         ?callable $callback = null
-    ): ProcessManagerInterface {
+    ): ProcessHypervisorInterface {
         $this->pendingProcesses->attach($process, $callback);
 
         return $this;
     }
 
+    /**
+     * @param int $processesToStart
+     *
+     * @return \SplObjectStorage
+     */
     private function pickFromPendingProcesses(int $processesToStart): \SplObjectStorage
     {
         $newProcesses = new \SplObjectStorage();
@@ -72,6 +82,9 @@ class ProcessManager implements ProcessManagerInterface
         return $newProcesses;
     }
 
+    /**
+     * @return \SplObjectStorage
+     */
     private function probeAndPickStoppedProcesses(): \SplObjectStorage
     {
         $stoppedProcesses = new \SplObjectStorage();
@@ -93,9 +106,9 @@ class ProcessManager implements ProcessManagerInterface
         return $stoppedProcesses;
     }
 
-    public function run(callable $loopController): ProcessManagerInterface
+    public function run(callable $loopController): ProcessHypervisorInterface
     {
-        while (true) {
+        while ($this->count() > 0) {
             $processesToStart = $this->maxProcesses - $this->currentProcesses->count();
             if ($processesToStart > 0) {
                 $newProcesses = $this->pickFromPendingProcesses($processesToStart);
@@ -104,32 +117,42 @@ class ProcessManager implements ProcessManagerInterface
                 $this->currentProcesses->addAll($newProcesses);
             }
 
-            usleep($this->pollTime);
-
             $stoppedProcesses = $this->probeAndPickStoppedProcesses();
 
             if ($loopController($this, iterator_to_array($stoppedProcesses), $this->count()) === false) {
-                foreach ($this->currentProcesses as $process) {
-                    $process->stop(10, SIGSTOP);
-                }
+                $this->stopProcesses($this->currentProcesses, 10, SIGSTOP);
                 break;
             }
 
-            if ($this->count() <= 0) {
-                break;
-            }
+            usleep($this->pollTime);
         }
 
         return $this;
     }
 
     /**
-     * @param Process[]|\Traversable $processes
+     * @param Process[]|iterable $processes
      */
-    private function startProcesses(\Traversable $processes)
+    private function startProcesses(iterable $processes)
     {
         foreach ($processes as $process) {
             $process->start();
+        }
+    }
+
+    /**
+     * @param Process[]|iterable $processes
+     * @param int $timeout
+     * @param int $signal
+     */
+    private function stopProcesses(?iterable $processes, int $timeout = 10, int $signal = SIGTERM)
+    {
+        if ($processes === null) {
+            return;
+        }
+
+        foreach ($processes as $process) {
+            $process->stop($timeout, $signal);
         }
     }
 
@@ -138,6 +161,6 @@ class ProcessManager implements ProcessManagerInterface
      */
     public function count()
     {
-        return count($this->pendingProcesses) + count($this->currentProcesses);
+        return $this->pendingProcesses->count() + $this->currentProcesses->count();
     }
 }
