@@ -125,11 +125,11 @@ class TokenStream
      */
     public function expect(TokenConstraint $constraint): Token
     {
-        if (!$this->assert($constraint)) {
-            throw Exception\UnexpectedTokenException::unmatchedConstraint($this->watch(), $constraint);
+        if ($this->assert($constraint)) {
+            return $this->consume();
         }
 
-        return $this->consume();
+        throw Exception\UnexpectedTokenException::unmatchedConstraint($this->watch(), $constraint);
     }
 
     /**
@@ -141,10 +141,8 @@ class TokenStream
      */
     public function expectAny(iterable $constraints): Token
     {
-        foreach ($constraints as $constraint) {
-            if ($this->assert($constraint)) {
-                return $this->consume();
-            }
+        if ($this->assertAny($constraints)) {
+            return $this->consume();
         }
 
         throw Exception\UnexpectedTokenException::unmatchedConstraints($this->watch(), $constraints);

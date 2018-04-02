@@ -39,7 +39,7 @@ class EnvironmentResolution implements TreeResolutionInterface
 
         $environment = new Node\EnvironmentNode();
 
-        while (true) {
+        while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
             $variable = $tokenStream->expect(TokenConstraint::identifier());
             $tokenStream->expect(TokenConstraint::operator('='));
             if ($tokenStream->assertAny(TokenConstraint::anyString())) {
@@ -51,12 +51,9 @@ class EnvironmentResolution implements TreeResolutionInterface
             }
 
             $environment->set($variable->value, $childNode);
-
-            if ($tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
-                $tokenStream->step();
-                break;
-            }
         }
+
+        $tokenStream->step();
 
         return $environment;
     }

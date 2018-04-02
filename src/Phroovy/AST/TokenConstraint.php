@@ -135,4 +135,31 @@ class TokenConstraint
     {
         return new self(Token::CLOSING_BRACKET);
     }
+
+    /**
+     * @return TokenConstraint
+     */
+    public static function integer(): TokenConstraint
+    {
+        return new self(Token::NUMBER_INTEGER);
+    }
+
+    /**
+     * @return TokenConstraint
+     */
+    public static function float(): TokenConstraint
+    {
+        return new self(Token::NUMBER_FLOAT);
+    }
+
+    /**
+     * @return self[]|iterable
+     */
+    public static function anyNumber(): iterable
+    {
+        return [
+            new self(Token::NUMBER_FLOAT),
+            new self(Token::NUMBER_INTEGER),
+        ];
+    }
 }

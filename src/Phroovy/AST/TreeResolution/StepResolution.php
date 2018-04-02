@@ -17,11 +17,7 @@ class StepResolution implements TreeResolutionInterface
     {
         $step = new Node\StepNode($tokenStream->expect(TokenConstraint::identifier())->value);
 
-        while (true) {
-            if (!$tokenStream->assertAny(TokenConstraint::anyString())) {
-                break;
-            }
-
+        while ($tokenStream->assertAny(TokenConstraint::anyString())) {
             $step->arguments[] = $tokenStream->consume()->value;
         }
 

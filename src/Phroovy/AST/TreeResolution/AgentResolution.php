@@ -60,17 +60,14 @@ class AgentResolution implements TreeResolutionInterface
             $tokenStream->consume();
 
             $arguments = [];
-            while (true) {
+            while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
                 $key = $tokenStream->expect(TokenConstraint::identifier())->value;
                 $value = $tokenStream->expectAny(TokenConstraint::anyString())->value;
 
                 $arguments[$key] = $value;
-
-                if ($tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
-                    $tokenStream->consume();
-                    break;
-                }
             }
+
+            $tokenStream->consume();
         } else {
             throw Exception\UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),

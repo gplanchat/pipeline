@@ -6,6 +6,7 @@ use Kiboko\Component\Phroovy\AST\Exception;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 class FunctionCallResolution implements TreeResolutionInterface
 {
@@ -25,13 +26,26 @@ class FunctionCallResolution implements TreeResolutionInterface
         $tokenStream->expect(TokenConstraint::openingBracket());
 
         $arguments = [];
-        while (true) {
+        while (!$tokenStream->assert(TokenConstraint::closingBracket())) {
             if ($tokenStream->assertAny(TokenConstraint::anyString())) {
                 $arguments[] = $tokenStream->consume()->value;
-            } else if (false && $tokenStream->assert(TokenConstraint::identifier())) {
-                $arguments[] = $tokenStream->consume()->value;
+            } else if ($tokenStream->assert(TokenConstraint::identifier())) {
+                $key = $tokenStream->consume()->value;
 
                 $tokenStream->expect(TokenConstraint::operator(':'));
+
+                if ($tokenStream->assert(TokenConstraint::integer())) {
+                    $arguments[$key] = (int) $tokenStream->consume()->value;
+                } else if ($tokenStream->assert(TokenConstraint::float())) {
+                    $arguments[$key] = (float) $tokenStream->consume()->value;
+                } else if ($tokenStream->assertAny(TokenConstraint::anyString())) {
+                    $arguments[$key] = $tokenStream->consume()->value;
+                } else {
+                    throw Exception\UnexpectedTokenException::unmatchedConstraints($tokenStream->watch(), array_merge(
+                        TokenConstraint::anyNumber(),
+                        TokenConstraint::anyString()
+                    ));
+                }
             } else {
                 throw Exception\UnexpectedTokenException::expectedString($tokenStream->watch());
             }
@@ -39,16 +53,6 @@ class FunctionCallResolution implements TreeResolutionInterface
             if ($tokenStream->assert(TokenConstraint::operator(','))) {
                 $tokenStream->consume();
                 continue;
-            } else if ($tokenStream->assert(TokenConstraint::closingBracket())) {
-                break;
-            } else {
-                throw Exception\UnexpectedTokenException::unmatchedConstraints(
-                    $tokenStream->watch(),
-                    [
-                        TokenConstraint::operator(','),
-                        TokenConstraint::closingBracket(),
-                    ]
-                );
             }
         }
 

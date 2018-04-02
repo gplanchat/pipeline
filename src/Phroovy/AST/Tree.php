@@ -17,6 +17,7 @@ class Tree
     private $postActionResolution;
     private $agentResolution;
     private $pipelineResolution;
+    private $functionCallResolution;
 
     public function __construct()
     {
@@ -49,11 +50,16 @@ class Tree
             $this->stageResolution
         );
 
+        $this->functionCallResolution = new TreeResolution\FunctionCallResolution();
+
         $this->pipelineResolution = new TreeResolution\PipelineResolution(
             $this->agentResolution,
             $this->stageCollectionResolution,
             $this->environmentResolution,
-            $this->postActionResolution
+            $this->postActionResolution,
+            new TreeResolution\OptionsResolution(
+                $this->functionCallResolution
+            )
         );
     }
 

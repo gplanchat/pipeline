@@ -19,8 +19,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode();
-        $expected->agent = new AST\AnyAgentNode();
+        $expected = new AST\PipelineNode(null, new AST\AnyAgentNode());
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -36,8 +35,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode();
-        $expected->agent = new AST\NoneAgentNode();
+        $expected = new AST\PipelineNode(null, new AST\NoneAgentNode());
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -53,8 +51,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode();
-        $expected->agent = new AST\AgentNode('docker');
+        $expected = new AST\PipelineNode(null, new AST\AgentNode('docker'));
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -76,12 +73,11 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode();
-        $expected->agent = new AST\AgentNode('docker', [
+        $expected = new AST\PipelineNode(null, new AST\AgentNode('docker', [
             'image' => 'maven:3-alpine',
             'label' => 'my-defined-label',
             'args'  => '-v /tmp:/tmp',
-        ]);
+        ]));
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -98,10 +94,9 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode();
-        $expected->agent = new AST\AgentNode('docker', [
+        $expected = new AST\PipelineNode(null, new AST\AgentNode('docker', [
             'maven:3-alpine',
-        ]);
+        ]));
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }

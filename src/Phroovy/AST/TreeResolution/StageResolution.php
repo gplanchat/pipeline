@@ -6,6 +6,7 @@ use Kiboko\Component\Phroovy\AST\Exception;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 class StageResolution implements TreeResolutionInterface
 {
@@ -73,7 +74,7 @@ class StageResolution implements TreeResolutionInterface
 
         $tokenStream->expect(TokenConstraint::openingCurlyBraces());
 
-        while (true) {
+        while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
             if ($this->stepCollectionResolution->assert($tokenStream)) {
                 $stage->steps = $this->stepCollectionResolution->create($tokenStream);
                 continue;
@@ -94,17 +95,13 @@ class StageResolution implements TreeResolutionInterface
                 continue;
             }
 
-            if ($tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
-                $tokenStream->step();
-                break;
-            }
-
             throw Exception\UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
                 [
-                    TokenConstraint::keyword('steps'),
-                    TokenConstraint::keyword('environment'),
-                    TokenConstraint::keyword('post'),
+                    new TokenConstraint(Token::KEYWORD, 'steps'),
+                    new TokenConstraint(Token::KEYWORD, 'environment'),
+                    new TokenConstraint(Token::KEYWORD, 'agent'),
+                    new TokenConstraint(Token::KEYWORD, 'post'),
                 ]
             );
         }
