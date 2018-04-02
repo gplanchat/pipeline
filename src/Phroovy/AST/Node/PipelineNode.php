@@ -17,11 +17,17 @@ class PipelineNode implements NodeInterface
      * @param StageCollectionNode $stages
      * @param AgentNode|null $agent
      * @param EnvironmentNode|null $environment
+     * @param PostActionNode|null $post
      */
-    public function __construct(StageCollectionNode $stages = null, ?AgentNode $agent = null, ?EnvironmentNode $environment = null)
-    {
+    public function __construct(
+        StageCollectionNode $stages = null,
+        ?AgentNode $agent = null,
+        ?EnvironmentNode $environment = null,
+        ?PostActionNode $post = null
+    ) {
         $this->stages = $stages ?? new StageCollectionNode();
         $this->agent = $agent;
         $this->environment = $environment;
+        $this->post = $post;
     }
 }

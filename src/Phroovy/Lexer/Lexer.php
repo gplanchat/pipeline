@@ -5,7 +5,7 @@ namespace Kiboko\Component\Phroovy\Lexer;
 final class Lexer
 {
     private static $tokens = [
-        Token::KEYWORD => '/\\s*(pipeline|agent|stages|stage|steps|environment|post|always|failure|any|none)(\\s*|$)/',
+        Token::KEYWORD => '/\\s*(pipeline|agent|stages|stage|steps|environment|post|always|unstable|success|failure|changed|any|none)(\\s*|$)/',
         Token::OPERATOR => '/\\s*(=|,|:)(\\s*|$)/',
         Token::OPENING_CURLY_BRACES => '/\\s*(\\{)(\\s*|$)/',
         Token::CLOSING_CURLY_BRACES => '/\\s*(})(\\s*|$)/',

@@ -26,11 +26,17 @@ class StageNode implements NodeInterface
      * @param string $label
      * @param StepCollectionNode $steps
      * @param AgentNode $agent
+     * @param EnvironmentNode|null $environment
      */
-    public function __construct(?string $label = null, StepCollectionNode $steps = null, AgentNode $agent = null)
-    {
+    public function __construct(
+        ?string $label = null,
+        StepCollectionNode $steps = null,
+        AgentNode $agent = null,
+        ?EnvironmentNode $environment = null
+    ) {
         $this->label = $label;
         $this->steps = $steps ?? new StepCollectionNode();
         $this->agent = $agent;
+        $this->environment = $environment;
     }
 }

@@ -2,38 +2,43 @@
 
 namespace test\Kiboko\Component\Pipeline\ExecutionContext;
 
-use Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisor;
+use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisor;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
+use React\ChildProcess\Process;
+use React\EventLoop\LoopInterface;
 
-class ProcessManagerTest extends TestCase
+class ProcessHypervisorTest extends TestCase
 {
     private function buildRunningProcessMock($runs = 0, $shouldBeInterrupted = false): Process
     {
+        $builder = $this->getMockBuilder(LoopInterface::class);
+
+        $loopMock = $builder->getMockForAbstractClass();
+
         $builder = $this->getMockBuilder(Process::class);
 
         $builder->setMethods(['start', 'stop', 'isRunning', '__destruct']);
         $builder->setConstructorArgs(['bin/command']);
 
-        $mock = $builder->getMock();
+        $processMock = $builder->getMock();
 
-        $mock->expects($this->once())
+        $processMock->expects($this->once())
             ->method('start')
-            ->with();
+            ->with($loopMock);
 
         for ($run = 1; $run <= $runs; ++$run) {
-            $mock->expects($this->at($run))
+            $processMock->expects($this->at($run))
                 ->method('isRunning')
                 ->with()
                 ->willReturn(true);
         }
 
-        $mock->expects($this->at($run))
+        $processMock->expects($this->at($run))
             ->method('isRunning')
             ->with()
             ->willReturn($shouldBeInterrupted);
 
-        return $mock;
+        return $processMock;
     }
 
     private function buildCallbackMock()
