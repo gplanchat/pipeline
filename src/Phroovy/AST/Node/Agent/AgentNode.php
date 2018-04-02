@@ -1,8 +1,8 @@
 <?php
 
-namespace Kiboko\Component\Phroovy\AST\Node;
+namespace Kiboko\Component\Phroovy\AST\Node\Agent;
 
-class AgentNode implements NodeInterface
+class AgentNode implements AgentNodeInterface
 {
     /**
      * @var string

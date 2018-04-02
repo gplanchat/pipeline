@@ -7,6 +7,13 @@ use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
 
+/**
+ * Required: yes
+ * Parameters: any, none, label, node, docker, dockerfile
+ * Allowed: in the top-level pipeline block and each stage block.
+ *
+ * @see https://jenkins.io/doc/book/pipeline/syntax/#agent
+ */
 class AgentResolution implements TreeResolutionInterface
 {
     public function assert(TokenStream $tokenStream): bool
@@ -17,7 +24,7 @@ class AgentResolution implements TreeResolutionInterface
     /**
      * @param TokenStream $tokenStream
      *
-     * @return Node\AgentNode
+     * @return Node\Agent\AgentNode
      */
     public function create(TokenStream $tokenStream): Node\NodeInterface
     {
@@ -25,16 +32,16 @@ class AgentResolution implements TreeResolutionInterface
 
         if ($tokenStream->assert(TokenConstraint::keyword('any'))) {
             $tokenStream->consume();
-            return new Node\AnyAgentNode();
+            return new Node\Agent\AnyAgentNode();
         }
 
         if ($tokenStream->assert(TokenConstraint::keyword('none'))) {
             $tokenStream->consume();
-            return new Node\NoneAgentNode();
+            return new Node\Agent\NoneAgentNode();
         }
 
         if ($tokenStream->assertAny(TokenConstraint::anyStringOrIdentifier())) {
-            return new Node\AgentNode($tokenStream->consume()->value);
+            return new Node\Agent\AgentNode($tokenStream->consume()->value);
         }
 
         if (!$tokenStream->assert(TokenConstraint::openingCurlyBraces())) {
@@ -82,6 +89,6 @@ class AgentResolution implements TreeResolutionInterface
 
         $tokenStream->expect(TokenConstraint::closingCurlyBraces());
 
-        return new Node\AgentNode($agent, $arguments);
+        return new Node\Agent\AgentNode($agent, $arguments);
     }
 }

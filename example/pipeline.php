@@ -1,5 +1,7 @@
 <?php
 
+use Kiboko\Component\Jenkinsfile\Lexer\WhitespaceFilteredTokenIterator;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 require 'Step/FooStep.php';
@@ -23,9 +25,21 @@ $pipeline = new Kiboko\Component\Pipeline\Plumbing\Pipeline(
 
 $runner = new \Kiboko\Component\Pipeline\PipelineRunner(
     new \Kiboko\Component\Pipeline\Processor\InterruptibleProcessor(
-        new \Kiboko\Component\Pipeline\ExecutionContext\ProcessHypervisor(5),
+        new \Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisor(5),
         new \Kiboko\Component\Pipeline\ExecutionContext\ExecutionFailure\ExecutionFailureBuilder()
     )
 );
 
-$runner->run($pipeline, new \Kiboko\Component\Pipeline\ExecutionContext\ShellExecutionContext());
+//$runner->run($pipeline, new \Kiboko\Component\Pipeline\ExecutionContext\ShellExecutionContext());
+
+$lexer = new \Kiboko\Component\Jenkinsfile\Lexer\Lexer();
+
+//var_dump(iterator_to_array($lexer->tokenize(file_get_contents(__DIR__ . '/Jenkinsfile'))));
+
+$ast = new \Kiboko\Component\Jenkinsfile\AST\Tree();
+
+var_dump($ast->compile($lexer->tokenize(file_get_contents(__DIR__ . '/Jenkinsfile'))));
+
+$config = new \Kiboko\Component\Pipeline\Config\Config(new \Kiboko\Component\Pipeline\Config\DemoStepBuilder());
+
+//var_dump(iterator_to_array($config->compile($ast->compile($lexer->tokenize(file_get_contents(__DIR__ . '/Jenkinsfile'))))));

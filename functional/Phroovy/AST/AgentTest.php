@@ -19,7 +19,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode(null, new AST\AnyAgentNode());
+        $expected = new AST\PipelineNode(null, new AST\Agent\AnyAgentNode());
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -35,7 +35,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode(null, new AST\NoneAgentNode());
+        $expected = new AST\PipelineNode(null, new AST\Agent\NoneAgentNode());
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -51,7 +51,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode(null, new AST\AgentNode('docker'));
+        $expected = new AST\PipelineNode(null, new AST\Agent\AgentNode('docker'));
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
     }
@@ -73,7 +73,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode(null, new AST\AgentNode('docker', [
+        $expected = new AST\PipelineNode(null, new AST\Agent\AgentNode('docker', [
             'image' => 'maven:3-alpine',
             'label' => 'my-defined-label',
             'args'  => '-v /tmp:/tmp',
@@ -94,7 +94,7 @@ PIPE_EOL;
         $lexer = new Lexer();
         $tree = new Tree();
 
-        $expected = new AST\PipelineNode(null, new AST\AgentNode('docker', [
+        $expected = new AST\PipelineNode(null, new AST\Agent\AgentNode('docker', [
             'maven:3-alpine',
         ]));
 
@@ -122,12 +122,12 @@ PIPE_EOL;
                 new AST\StageNode(
                     'Example Build',
                     new AST\StepCollectionNode(),
-                    new AST\AgentNode('docker', [
+                    new AST\Agent\AgentNode('docker', [
                         'maven:3-alpine',
                     ])
                 ),
             ]),
-            new AST\NoneAgentNode()
+            new AST\Agent\NoneAgentNode()
         );
 
         $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));

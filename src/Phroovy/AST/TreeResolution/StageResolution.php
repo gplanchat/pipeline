@@ -31,21 +31,29 @@ class StageResolution implements TreeResolutionInterface
     private $postActionResolution;
 
     /**
+     * @var OptionsResolution
+     */
+    private $optionsResolution;
+
+    /**
      * @param StepCollectionResolution $stepCollectionResolution
      * @param EnvironmentResolution $environmentResolution
      * @param AgentResolution $agentResolution
      * @param PostActionResolution $postActionResolution
+     * @param OptionsResolution $optionsResolution
      */
     public function __construct(
         StepCollectionResolution $stepCollectionResolution,
         EnvironmentResolution $environmentResolution,
         AgentResolution $agentResolution,
-        PostActionResolution $postActionResolution
+        PostActionResolution $postActionResolution,
+        OptionsResolution $optionsResolution
     ) {
         $this->stepCollectionResolution = $stepCollectionResolution;
         $this->environmentResolution = $environmentResolution;
         $this->agentResolution = $agentResolution;
         $this->postActionResolution = $postActionResolution;
+        $this->optionsResolution = $optionsResolution;
     }
 
     public function assert(TokenStream $tokenStream): bool
@@ -92,6 +100,11 @@ class StageResolution implements TreeResolutionInterface
 
             if ($this->postActionResolution->assert($tokenStream)) {
                 $stage->post = $this->postActionResolution->create($tokenStream);
+                continue;
+            }
+
+            if ($this->optionsResolution->assert($tokenStream)) {
+                $stage->options = $this->optionsResolution->create($tokenStream);
                 continue;
             }
 

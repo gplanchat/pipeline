@@ -8,6 +8,13 @@ use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
 use Kiboko\Component\Phroovy\Lexer\Token;
 
+/**
+ * Required: no
+ * Parameters: none
+ * Allowed: only once, inside the pipeline block.
+ *
+ * @see https://jenkins.io/doc/book/pipeline/syntax/#options
+ */
 class OptionsResolution implements TreeResolutionInterface
 {
     /**

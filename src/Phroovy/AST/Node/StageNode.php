@@ -18,20 +18,25 @@ class StageNode implements NodeInterface
     public $steps;
 
     /**
-     * @var AgentNode
+     * @var Agent\AgentNode
      */
     public $agent;
 
     /**
+     * @var OptionsNode
+     */
+    public $options;
+
+    /**
      * @param string $label
      * @param StepCollectionNode $steps
-     * @param AgentNode $agent
+     * @param Agent\AgentNode $agent
      * @param EnvironmentNode|null $environment
      */
     public function __construct(
         ?string $label = null,
         StepCollectionNode $steps = null,
-        AgentNode $agent = null,
+        Agent\AgentNode $agent = null,
         ?EnvironmentNode $environment = null
     ) {
         $this->label = $label;

@@ -20,14 +20,14 @@ class PipelineNode implements NodeInterface
 
     /**
      * @param StageCollectionNode $stages
-     * @param AgentNode|null $agent
+     * @param Agent\AgentNode|null $agent
      * @param EnvironmentNode|null $environment
      * @param PostActionNode|null $post
      * @param OptionsNode|null $options
      */
     public function __construct(
         StageCollectionNode $stages = null,
-        ?AgentNode $agent = null,
+        ?Agent\AgentNode $agent = null,
         ?EnvironmentNode $environment = null,
         ?PostActionNode $post = null,
         ?OptionsNode $options = null

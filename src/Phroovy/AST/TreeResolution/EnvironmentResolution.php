@@ -7,6 +7,13 @@ use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
 
+/**
+ * Required: yes
+ * Parameters: none
+ * Allowed: inside the pipeline block, or within stage directives.
+ *
+ * @see https://jenkins.io/doc/book/pipeline/syntax/#environment
+ */
 class EnvironmentResolution implements TreeResolutionInterface
 {
     /**
