@@ -1,6 +1,11 @@
 suites:
     pipeline_suite:
         namespace: Kiboko\Component\Pipeline
-        psr4_prefix: Kiboko\Component\Pipeline
+        psr4_prefix: Kiboko\Component
+        spec_path: %paths.config%
+        src_path: %paths.config%
+    jenkinsfile_suite:
+        namespace: Kiboko\Component\Jenkinsfile
+        psr4_prefix: Kiboko\Component
         spec_path: %paths.config%
         src_path: %paths.config%

@@ -13,11 +13,20 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/process": "^2.8"
+        "symfony/process": "^2.8",
+        "react/promise": "^2.5",
+        "react/child-process": "^0.5"
     },
     "autoload": {
         "psr-4": {
-            "Kiboko\\Component\\Pipeline\\": "src/"
+            "Kiboko\\Component\\Pipeline\\": "src/Pipeline",
+            "Kiboko\\Component\\Phroovy\\": "src/Phroovy"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "functional\\Kiboko\\Component\\Pipeline\\": "functional/Pipeline",
+            "functional\\Kiboko\\Component\\Phroovy\\": "functional/Phroovy"
         }
     }
 }
