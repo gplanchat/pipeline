@@ -38,21 +38,21 @@ class StepChainSpec extends ObjectBehavior
     function it_can_execute_steps(
         StepInterface $step1,
         StepInterface $step2,
-        ProcessHypervisor $processManager,
+        ProcessHypervisor $processHypervisor,
         ExecutionContextInterface $executionContext
     ) {
         $this->beConstructedWith($step1, $step2);
 
-        $step1->run($processManager, $executionContext)
+        $step1->run($processHypervisor, $executionContext)
             ->willReturn($executionContext);
-        $step2->run($processManager, $executionContext)
+        $step2->run($processHypervisor, $executionContext)
             ->willReturn($executionContext);
 
-        $this->run($processManager, $executionContext);
+        $this->run($processHypervisor, $executionContext);
 
-        $step1->run($processManager, $executionContext)
+        $step1->run($processHypervisor, $executionContext)
             ->shouldHaveBeenCalled();
-        $step2->run($processManager, $executionContext)
+        $step2->run($processHypervisor, $executionContext)
             ->shouldHaveBeenCalled();
     }
 

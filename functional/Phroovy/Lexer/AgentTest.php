@@ -3,6 +3,7 @@
 namespace functional\Kiboko\Component\Phroovy\Lexer;
 
 use Kiboko\Component\Phroovy\Lexer\Lexer;
+use Kiboko\Component\Phroovy\Lexer\NewLineFilterIterator;
 use Kiboko\Component\Phroovy\Lexer\Token;
 
 class AgentTest extends TestCase
@@ -36,7 +37,7 @@ PIPE_EOL;
                 [Token::CLOSING_CURLY_BRACES],
                 [Token::CLOSING_CURLY_BRACES],
             ],
-            $lexer->tokenize($pipeline)
+            new NewLineFilterIterator($lexer->tokenize($pipeline))
         );
     }
 }

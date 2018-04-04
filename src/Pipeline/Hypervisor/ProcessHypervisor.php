@@ -129,13 +129,22 @@ class ProcessHypervisor implements ProcessHypervisorInterface
     /**
      * @param LoopInterface $loop
      * @param Process[]|iterable $processes
-     *
-     * @throws \RuntimeException
      */
     private function startProcesses(LoopInterface $loop, iterable $processes): void
     {
         foreach ($processes as $process) {
-            $process->start($loop);
+            try {
+                $process->start($loop);
+                $process->stdout->on('data', function($data) {
+                    echo $data;
+                });
+            } catch (\RuntimeException $e) {
+                throw new UnhandledProcessException(
+                    'Could not start process.',
+                    $process,
+                    $e
+                );
+            }
         }
     }
 

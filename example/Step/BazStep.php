@@ -19,7 +19,7 @@ class BazStep implements StepInterface
     }
 
     public function run(
-        ProcessHypervisorInterface $processManager,
+        ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         echo 'STARTING:' . __METHOD__ . '("' . $this->param . '")' . PHP_EOL;

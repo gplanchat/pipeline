@@ -3,6 +3,7 @@
 namespace functional\Kiboko\Component\Phroovy\Lexer;
 
 use Kiboko\Component\Phroovy\Lexer\Lexer;
+use Kiboko\Component\Phroovy\Lexer\NewLineFilterIterator;
 use Kiboko\Component\Phroovy\Lexer\Token;
 
 class PipelineTest extends TestCase
@@ -22,7 +23,7 @@ PIPE_EOL;
                 [Token::OPENING_CURLY_BRACES],
                 [Token::CLOSING_CURLY_BRACES],
             ],
-            $lexer->tokenize($pipeline)
+            new NewLineFilterIterator($lexer->tokenize($pipeline))
         );
     }
 
@@ -43,7 +44,7 @@ PIPE_EOL;
                 [Token::MULTIPLE_LINE_COMMENT],
                 [Token::CLOSING_CURLY_BRACES],
             ],
-            $lexer->tokenize($pipeline)
+            new NewLineFilterIterator($lexer->tokenize($pipeline))
         );
     }
 
@@ -64,7 +65,7 @@ PIPE_EOL;
                 [Token::SINGLE_LINE_COMMENT],
                 [Token::CLOSING_CURLY_BRACES],
             ],
-            $lexer->tokenize($pipeline)
+            new NewLineFilterIterator($lexer->tokenize($pipeline))
         );
     }
 }

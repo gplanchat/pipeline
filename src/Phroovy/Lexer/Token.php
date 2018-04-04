@@ -4,6 +4,7 @@ namespace Kiboko\Component\Phroovy\Lexer;
 
 final class Token
 {
+    const NEWLINE = 'T_NEWLINE';
     const KEYWORD = 'T_KEYWORD';
     const OPERATOR = 'T_OPERATOR';
     const IDENTIFIER = 'T_IDENTIFIER';

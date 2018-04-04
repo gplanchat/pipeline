@@ -16,9 +16,11 @@ class StepResolutionTest extends TestCase
         yield [
             [
                 new Token(token::IDENTIFIER, 2, 'sh', 0, 0, 1),
-                new Token(token::SINGLE_QUOTED_STRING, 19, 'echo "Hello, world"', 3, 0, 4),
+                new Token(token::SINGLE_QUOTED_STRING, 4, 'echo', 3, 0, 4),
+                new Token(token::SINGLE_QUOTED_STRING, 12, 'Hello, world', 6, 0, 7),
+                new Token(token::NEWLINE, 1, 'Hello, world', 24, 0, 25),
             ],
-            new StepNode('sh', ['echo "Hello, world"'])
+            new StepNode('sh', ['echo', 'Hello, world'])
         ];
     }
 

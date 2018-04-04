@@ -2,6 +2,7 @@
 
 namespace Kiboko\Component\Phroovy\AST;
 
+use Kiboko\Component\Phroovy\Lexer\NewLineFilterIterator;
 use Kiboko\Component\Phroovy\Lexer\Token;
 
 class TokenStream
@@ -16,8 +17,8 @@ class TokenStream
      */
     public function __construct(\Iterator $iterator)
     {
-        $this->iterator = $iterator;
-        $iterator->rewind();
+        $this->iterator = new NewLineFilterIterator($iterator);
+        $this->iterator->rewind();
     }
 
     /**
@@ -28,6 +29,16 @@ class TokenStream
     public function finished(): bool
     {
         return !$this->iterator->valid();
+    }
+
+    public function skipNewlines(): void
+    {
+        $this->iterator->enable();
+    }
+
+    public function keepNewlines(): void
+    {
+        $this->iterator->disable();
     }
 
     /**

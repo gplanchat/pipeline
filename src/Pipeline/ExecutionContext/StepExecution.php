@@ -46,18 +46,18 @@ class StepExecution implements StepExecutionInterface
     }
 
     /**
-     * @param ProcessHypervisorInterface $processManager
+     * @param ProcessHypervisorInterface $processHypervisor
      * @param ExecutionContextInterface $executionContext
      *
      * @return ExecutionContextInterface
      */
     public function execute(
-        ProcessHypervisorInterface $processManager,
+        ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         $step = $this->step;
         try {
-            return $step->run($processManager, $executionContext);
+            return $step->run($processHypervisor, $executionContext);
         } catch (\Throwable $e) {
             $this->executionFailure = $this->executionFailureBuilder->build($e);
         }

@@ -8,13 +8,13 @@ use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 interface StepInterface
 {
     /**
-     * @param ProcessHypervisorInterface $processManager
+     * @param ProcessHypervisorInterface $processHypervisor
      * @param ExecutionContextInterface $executionContext
      *
      * @return ExecutionContextInterface
      */
     public function run(
-        ProcessHypervisorInterface $processManager,
+        ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface;
 }

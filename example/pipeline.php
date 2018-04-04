@@ -1,7 +1,5 @@
 <?php
 
-use Kiboko\Component\Jenkinsfile\Lexer\WhitespaceFilteredTokenIterator;
-
 require __DIR__ . '/../vendor/autoload.php';
 
 require 'Step/FooStep.php';

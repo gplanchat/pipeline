@@ -14,13 +14,15 @@ class TestCase extends PHPUnitTestCase
         foreach ($stream as $item) {
             return $item;
         }
+
+        throw new \RuntimeException('Empty iterable.');
     }
 
     /**
      * Asserts that a Token stream has specified tokens.
      *
-     * @param NodeInterface[] $expected
-     * @param NodeInterface[]|iterable $actual
+     * @param NodeInterface $expected
+     * @param NodeInterface $actual
      * @param string $message
      *
      * @throws ExpectationFailedException
@@ -31,14 +33,14 @@ class TestCase extends PHPUnitTestCase
         if (!($expected instanceof NodeInterface)) {
             throw InvalidArgumentHelper::factory(
                 1,
-                'iterable'
+                NodeInterface::class
             );
         }
 
         if (!($actual instanceof NodeInterface)) {
             throw InvalidArgumentHelper::factory(
                 2,
-                'iterable'
+                NodeInterface::class
             );
         }
 

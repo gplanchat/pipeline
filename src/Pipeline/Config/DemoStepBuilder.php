@@ -2,7 +2,7 @@
 
 namespace Kiboko\Component\Pipeline\Config;
 
-use Kiboko\Component\Jenkinsfile\AST\StepNode;
+use Kiboko\Component\Phroovy\AST\Node\StepNode;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
 use Kiboko\Component\Pipeline\Step\CommandStep;
 

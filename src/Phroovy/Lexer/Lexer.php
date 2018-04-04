@@ -5,19 +5,20 @@ namespace Kiboko\Component\Phroovy\Lexer;
 final class Lexer
 {
     private static $tokens = [
-        Token::KEYWORD => '/\\s*(pipeline|agent|stages|options|stage|steps|environment|post|always|unstable|success|failure|changed|any|none)(\\s*|$)/',
-        Token::OPERATOR => '/\\s*(=|,|:)(\\s*|$)/',
-        Token::OPENING_CURLY_BRACES => '/\\s*(\\{)(\\s*|$)/',
-        Token::CLOSING_CURLY_BRACES => '/\\s*(})(\\s*|$)/',
-        Token::OPENING_BRACKET => '/(\\()(\\s*|$)/',
-        Token::CLOSING_BRACKET => '/(\\))(\\s*|$)/',
-        Token::NUMBER_FLOAT => '/\\s*(0|[+-]?([1-9][0-9]*)?\\.[0-9]*)(\\s*|$)/',
-        Token::NUMBER_INTEGER => '/\\s*(0|[+-]?[1-9][0-9]*)(\\s*|$)/',
-        Token::SINGLE_QUOTED_STRING => '/\\s*\'(([^\'\\\\]|\\\\\\\\|\\\\\'|\\\\)+)\'?(\\s*|$)/',
-        Token::DOUBLE_QUOTED_STRING => '/\\s*"(([^"\\\\]|\\\\\\\\|\\\\"|\\\\)+)"?(\\s*|$)/',
-        Token::SINGLE_LINE_COMMENT => '/\\s*\\/\\/([^\\n]*)(\\s*|$)/',
-        Token::MULTIPLE_LINE_COMMENT => '/\\s*\\/\\*\\s*(.*)\\s*\\*\\/(\\s*|$)/U',
-        Token::IDENTIFIER => '/\\s*([^ \\t\\r\\n\\v\\f\\*\\(\\)\\{\\}:]+)(\\s*|$)/',
+        Token::NEWLINE => '/([\\r\\n]+)/',
+        Token::KEYWORD => '/\\s*(pipeline|agent|stages|options|stage|steps|environment|post|always|unstable|success|failure|changed|any|none)(?=\\s*|$)/',
+        Token::OPERATOR => '/\\s*(=|,|:)(?=\\s*|$)/',
+        Token::OPENING_CURLY_BRACES => '/\\s*(\\{)(?=\\s*|$)/',
+        Token::CLOSING_CURLY_BRACES => '/\\s*(})(?=\\s*|$)/',
+        Token::OPENING_BRACKET => '/(\\()(?=\\s*|$)/',
+        Token::CLOSING_BRACKET => '/(\\))(?=\\s*|$)/',
+        Token::NUMBER_FLOAT => '/\\s*(0|[+-]?([1-9][0-9]*)?\\.[0-9]*)(?=\\s*|$)/',
+        Token::NUMBER_INTEGER => '/\\s*(0|[+-]?[1-9][0-9]*)(?=\\s*|$)/',
+        Token::SINGLE_QUOTED_STRING => '/\\s*\'(([^\'\\\\]|\\\\\\\\|\\\\\'|\\\\)+)\'?(?=\\s*|$)/',
+        Token::DOUBLE_QUOTED_STRING => '/\\s*"(([^"\\\\]|\\\\\\\\|\\\\"|\\\\)+)"?(?=\\s*|$)/',
+        Token::SINGLE_LINE_COMMENT => '/\\s*\\/\\/([^\\n]*)(?=\\s*|$)/',
+        Token::MULTIPLE_LINE_COMMENT => '/\\s*\\/\\*\\s*(.*)\\s*\\*\\/(?=\\s*|$)/U',
+        Token::IDENTIFIER => '/\\s*([^ \\t\\r\\n\\v\\f\\*\\(\\)\\{\\}:]+)(?=\\s*|$)/',
     ];
 
     /**

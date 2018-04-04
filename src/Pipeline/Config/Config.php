@@ -2,19 +2,15 @@
 
 namespace Kiboko\Component\Pipeline\Config;
 
-use Kiboko\Component\Jenkinsfile\AST\NodeCollectionInterface;
-use Kiboko\Component\Jenkinsfile\AST\NodeInterface;
-use Kiboko\Component\Jenkinsfile\AST\PipelineNode;
-use Kiboko\Component\Jenkinsfile\AST\StageCollectionNode;
-use Kiboko\Component\Jenkinsfile\AST\StageNode;
-use Kiboko\Component\Jenkinsfile\AST\StepCollectionNode;
-use Kiboko\Component\Jenkinsfile\AST\StepNode;
-use Kiboko\Component\Jenkinsfile\Lexer\Token;
+use Kiboko\Component\Phroovy\AST\Node\NodeInterface;
+use Kiboko\Component\Phroovy\AST\Node\PipelineNode;
+use Kiboko\Component\Phroovy\AST\Node\StageCollectionNode;
+use Kiboko\Component\Phroovy\AST\Node\StageNode;
+use Kiboko\Component\Phroovy\AST\Node\StepCollectionNode;
 use Kiboko\Component\Pipeline\Plumbing\Pipeline;
 use Kiboko\Component\Pipeline\Plumbing\PipelineInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepChain;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
-use Kiboko\Component\Pipeline\Step\CommandStep;
 
 class Config
 {

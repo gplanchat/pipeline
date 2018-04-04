@@ -9,7 +9,7 @@ use Kiboko\Component\Pipeline\Plumbing\StepInterface;
 class BarStep implements StepInterface
 {
     public function run(
-        ProcessHypervisorInterface $processManager,
+        ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         echo 'STARTING:' . __METHOD__ . '()' . PHP_EOL;

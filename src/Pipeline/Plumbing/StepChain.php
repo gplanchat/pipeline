@@ -33,17 +33,17 @@ class StepChain implements StepChainInterface
     }
 
     /**
-     * @param ProcessHypervisorInterface $processManager
+     * @param ProcessHypervisorInterface $processHypervisor
      * @param ExecutionContextInterface $executionContext
      *
      * @return ExecutionContextInterface
      */
     public function run(
-        ProcessHypervisorInterface $processManager,
+        ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         foreach ($this->steps as $step) {
-            $executionContext = $step->run($processManager, $executionContext);
+            $executionContext = $step->run($processHypervisor, $executionContext);
         }
 
         return $executionContext;

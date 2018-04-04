@@ -162,4 +162,12 @@ class TokenConstraint
             new self(Token::NUMBER_INTEGER),
         ];
     }
+
+    /**
+     * @return TokenConstraint
+     */
+    public static function newLine(): TokenConstraint
+    {
+        return new self(Token::NEWLINE);
+    }
 }
