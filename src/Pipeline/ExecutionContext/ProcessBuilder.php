@@ -25,13 +25,16 @@ class ProcessBuilder
     /**
      * @param CommandInterface $command
      * @param string $workingDirectory
+     * @param array $env
      */
     public function __construct(
         CommandInterface $command,
-        ?string $workingDirectory = null
+        ?string $workingDirectory = null,
+        array $env
     ) {
         $this->command = $command;
         $this->workingDirectory = $workingDirectory;
+        $this->env = $env;
     }
 
     /**

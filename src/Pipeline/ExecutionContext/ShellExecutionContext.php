@@ -37,8 +37,11 @@ class ShellExecutionContext implements ExecutionContextInterface
      */
     public function build(CommandInterface $command): Process
     {
-        $processBuilder = new ProcessBuilder($command);
-        $processBuilder->setWorkingDirectory($this->workingDirectory() ?: getcwd());
+        $processBuilder = new ProcessBuilder(
+            $command,
+            $this->workingDirectory() ?: getcwd(),
+            getenv()
+        );
 
         return $processBuilder->getProcess();
     }
