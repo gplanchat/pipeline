@@ -1,0 +1,24 @@
+pipeline {
+    agent swarm
+
+    stages {
+        stage('Unit tests') {
+            steps {
+                sh 'composer' 'install'
+                sh 'phpunit' '--no-interaction' '--bootstrap=vendor/autoload.php' 'unit/'
+            }
+        }
+        stage('Functional tests') {
+            steps {
+                sh 'composer' 'install'
+                sh 'phpunit' '--no-interaction' '--bootstrap=vendor/autoload.php' 'functional/'
+            }
+        }
+        stage('Spec tests') {
+            steps {
+                sh 'composer' 'install'
+                sh 'phpspec' '--no-interaction' 'run'
+            }
+        }
+    }
+}
