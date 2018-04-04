@@ -37,7 +37,7 @@ PIPE_EOL;
             )
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testSuccessPostAction()
@@ -67,7 +67,7 @@ PIPE_EOL;
             )
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testChangedPostAction()
@@ -98,7 +98,7 @@ PIPE_EOL;
             )
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testUnstablePostAction()
@@ -130,7 +130,7 @@ PIPE_EOL;
             )
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testFailurePostAction()
@@ -163,6 +163,44 @@ PIPE_EOL;
             )
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
+    }
+
+    public function testMultiplePostAction()
+    {
+        $pipeline = <<<PIPE_EOL
+pipeline {
+    post { 
+        always { 
+            echo 'I will always say Hello again!'
+        }
+        failure { 
+            echo 'I will always say Hello again!'
+        }
+    }
+}
+PIPE_EOL;
+
+        $lexer = new Lexer();
+        $tree = new Tree();
+
+        $expected = new PipelineNode(
+            null,
+            null,
+            null,
+            new PostActionNode(
+                new StepCollectionNode([
+                    new StepNode('echo', ['I will always say Hello again!'])
+                ]),
+                null,
+                null,
+                null,
+                new StepCollectionNode([
+                    new StepNode('echo', ['I will always say Hello again!'])
+                ])
+            )
+        );
+
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 }

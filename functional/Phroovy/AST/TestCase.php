@@ -3,18 +3,23 @@
 namespace functional\Kiboko\Component\Phroovy\AST;
 
 use Kiboko\Component\Phroovy\AST\Node\NodeInterface;
-use PHPUnit\Framework\Constraint\IsEqual;
-use PHPUnit\Framework\Constraint\TraversableContains;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use PHPUnit\Util\InvalidArgumentHelper;
 
 class TestCase extends PHPUnitTestCase
 {
+    public function firstElement(iterable $stream)
+    {
+        foreach ($stream as $item) {
+            return $item;
+        }
+    }
+
     /**
      * Asserts that a Token stream has specified tokens.
      *
-     * @param NodeInterface $expected
+     * @param NodeInterface[] $expected
      * @param NodeInterface[]|iterable $actual
      * @param string $message
      *
@@ -26,18 +31,18 @@ class TestCase extends PHPUnitTestCase
         if (!($expected instanceof NodeInterface)) {
             throw InvalidArgumentHelper::factory(
                 1,
-                NodeInterface::class
+                'iterable'
             );
         }
 
-        if (!(\is_array($actual) || $actual instanceof \Iterator)) {
+        if (!($actual instanceof NodeInterface)) {
             throw InvalidArgumentHelper::factory(
                 2,
                 'iterable'
             );
         }
 
-        $constraint = new TraversableContains($expected, false, false);
+        $constraint = new TreeStreamHasNodes($expected);
 
         static::assertThat($actual, $constraint, $message);
     }

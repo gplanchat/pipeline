@@ -6,6 +6,7 @@ use Kiboko\Component\Phroovy\AST\Exception;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 /**
  * Required: yes
@@ -16,15 +17,30 @@ use Kiboko\Component\Phroovy\AST\TokenStream;
  */
 class AgentResolution implements TreeResolutionInterface
 {
-    public function assert(TokenStream $tokenStream): bool
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
     {
-        return $tokenStream->assert(TokenConstraint::keyword('agent'));
+        return [
+            TokenConstraint::keyword('agent'),
+        ];
     }
 
     /**
      * @param TokenStream $tokenStream
      *
-     * @return Node\Agent\AgentNode
+     * @return bool
+     */
+    public function assert(TokenStream $tokenStream): bool
+    {
+        return $tokenStream->assert(...$this->constraints());
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return Node\Agent\AgentNodeInterface
      */
     public function create(TokenStream $tokenStream): Node\NodeInterface
     {
@@ -40,26 +56,22 @@ class AgentResolution implements TreeResolutionInterface
             return new Node\Agent\NoneAgentNode();
         }
 
-        if ($tokenStream->assertAny(TokenConstraint::anyStringOrIdentifier())) {
+        if ($tokenStream->assert(...TokenConstraint::anyStringOrIdentifier())) {
             return new Node\Agent\AgentNode($tokenStream->consume()->value);
         }
 
         if (!$tokenStream->assert(TokenConstraint::openingCurlyBraces())) {
             throw Exception\UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
-                array_merge(
-                    [
-                        TokenConstraint::openingCurlyBraces(),
-                    ],
-                    TokenConstraint::anyStringOrIdentifier()
-                )
+                TokenConstraint::openingCurlyBraces(),
+                ...TokenConstraint::anyStringOrIdentifier()
             );
         }
         $tokenStream->consume();
 
         $agent = $tokenStream->expect(TokenConstraint::identifier())->value;
 
-        if ($tokenStream->assertAny(TokenConstraint::anyString())) {
+        if ($tokenStream->assert(...TokenConstraint::anyString())) {
             $arguments = [
                 $tokenStream->consume()->value
             ];
@@ -69,7 +81,7 @@ class AgentResolution implements TreeResolutionInterface
             $arguments = [];
             while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
                 $key = $tokenStream->expect(TokenConstraint::identifier())->value;
-                $value = $tokenStream->expectAny(TokenConstraint::anyString())->value;
+                $value = $tokenStream->expect(...TokenConstraint::anyString())->value;
 
                 $arguments[$key] = $value;
             }
@@ -78,12 +90,8 @@ class AgentResolution implements TreeResolutionInterface
         } else {
             throw Exception\UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
-                array_merge(
-                    [
-                        TokenConstraint::openingCurlyBraces(),
-                    ],
-                    TokenConstraint::anyString()
-                )
+                TokenConstraint::openingCurlyBraces(),
+                ...TokenConstraint::anyString()
             );
         }
 

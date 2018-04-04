@@ -37,11 +37,11 @@ class UnexpectedTokenException extends \RuntimeException
 
     /**
      * @param Token $token
-     * @param iterable|TokenConstraint[] $expectedVariants
+     * @param TokenConstraint[] $expectedVariants
      *
      * @return UnexpectedTokenException
      */
-    public static function unmatchedConstraints(Token $token, iterable $expectedVariants): self
+    public static function unmatchedConstraints(Token $token, TokenConstraint ...$expectedVariants): self
     {
         return new self(strtr(
             'Invalid token found line %line%:%column%, found %actual%, was expecting one of: %expected%',
@@ -63,10 +63,9 @@ class UnexpectedTokenException extends \RuntimeException
      */
     public static function expectedString(Token $token): self
     {
-        return self::unmatchedConstraints($token, [
-                new TokenConstraint(Token::SINGLE_QUOTED_STRING),
-                new TokenConstraint(Token::DOUBLE_QUOTED_STRING),
-            ]
+        return self::unmatchedConstraints($token,
+            new TokenConstraint(Token::SINGLE_QUOTED_STRING),
+            new TokenConstraint(Token::DOUBLE_QUOTED_STRING)
         );
     }
 
@@ -77,11 +76,10 @@ class UnexpectedTokenException extends \RuntimeException
      */
     public static function expectedStringOrIdentifier(Token $token): self
     {
-        return self::unmatchedConstraints($token, [
-                new TokenConstraint(Token::SINGLE_QUOTED_STRING),
-                new TokenConstraint(Token::DOUBLE_QUOTED_STRING),
-                new TokenConstraint(Token::IDENTIFIER),
-            ]
+        return self::unmatchedConstraints($token,
+            new TokenConstraint(Token::SINGLE_QUOTED_STRING),
+            new TokenConstraint(Token::DOUBLE_QUOTED_STRING),
+            new TokenConstraint(Token::IDENTIFIER)
         );
     }
 }

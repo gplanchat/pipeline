@@ -5,25 +5,41 @@ namespace Kiboko\Component\Phroovy\AST\TreeResolution;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 class PostActionResolution implements TreeResolutionInterface
 {
     /**
      * @var PostActionStepCollectionResolution
      */
-    private $postActionStageResolution;
+    private $postActionStepCollectionResolution;
 
     /**
-     * @param PostActionStepCollectionResolution $postActionStageResolution
+     * @param PostActionStepCollectionResolution $postActionStepCollectionResolution
      */
-    public function __construct(PostActionStepCollectionResolution $postActionStageResolution)
+    public function __construct(PostActionStepCollectionResolution $postActionStepCollectionResolution)
     {
-        $this->postActionStageResolution = $postActionStageResolution;
+        $this->postActionStepCollectionResolution = $postActionStepCollectionResolution;
     }
 
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return [
+            TokenConstraint::keyword('post'),
+        ];
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assert(TokenConstraint::keyword('post'));
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -37,12 +53,13 @@ class PostActionResolution implements TreeResolutionInterface
         $tokenStream->expect(TokenConstraint::openingCurlyBraces());
 
         $node = new Node\PostActionNode();
-        while ($this->postActionStageResolution->assert($tokenStream)) {
+        while ($this->postActionStepCollectionResolution->assert($tokenStream)) {
             $section = $tokenStream->watch()->value;
 
-            $node->$section = $this->postActionStageResolution->create($tokenStream);
+            $node->$section = $this->postActionStepCollectionResolution->create($tokenStream);
         }
 
+        // TODO: inspect what is happening, if it is expected to skip this expectation
         $tokenStream->expect(TokenConstraint::closingCurlyBraces());
 
         return $node;

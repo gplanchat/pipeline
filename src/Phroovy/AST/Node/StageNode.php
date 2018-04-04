@@ -6,6 +6,7 @@ class StageNode implements NodeInterface
 {
     use EnvironmentAwareNode;
     use PostActionsAwareNode;
+    use AgentAwareNode;
 
     /**
      * @var string
@@ -18,25 +19,20 @@ class StageNode implements NodeInterface
     public $steps;
 
     /**
-     * @var Agent\AgentNode
-     */
-    public $agent;
-
-    /**
      * @var OptionsNode
      */
     public $options;
 
     /**
-     * @param string $label
-     * @param StepCollectionNode $steps
-     * @param Agent\AgentNode $agent
+     * @param string|null $label
+     * @param StepCollectionNode|null $steps
+     * @param Agent\AgentNodeInterface|null $agent
      * @param EnvironmentNode|null $environment
      */
     public function __construct(
         ?string $label = null,
-        StepCollectionNode $steps = null,
-        Agent\AgentNode $agent = null,
+        ?StepCollectionNode $steps = null,
+        ?Agent\AgentNodeInterface $agent = null,
         ?EnvironmentNode $environment = null
     ) {
         $this->label = $label;

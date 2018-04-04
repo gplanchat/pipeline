@@ -30,11 +30,31 @@ class OptionsResolution implements TreeResolutionInterface
         $this->functionCallResolution = $functionCallResolution;
     }
 
-    public function assert(TokenStream $tokenStream): bool
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
     {
-        return $tokenStream->assert(new TokenConstraint(Token::KEYWORD, 'options'));
+        return [
+            TokenConstraint::keyword('options'),
+        ];
     }
 
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
+    public function assert(TokenStream $tokenStream): bool
+    {
+        return $tokenStream->assert(...$this->constraints());
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return Node\OptionsNode
+     */
     public function create(TokenStream $tokenStream): Node\NodeInterface
     {
         $tokenStream->expect(new TokenConstraint(Token::KEYWORD, 'options'));
@@ -49,9 +69,7 @@ class OptionsResolution implements TreeResolutionInterface
 
             throw UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
-                [
-                    new TokenConstraint(Token::IDENTIFIER),
-                ]
+                ...$this->functionCallResolution->constraints()
             );
         }
 

@@ -10,9 +10,24 @@ use Kiboko\Component\Phroovy\Lexer\Token;
 
 class FunctionCallResolution implements TreeResolutionInterface
 {
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return [
+            TokenConstraint::identifier(),
+        ];
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assert(TokenConstraint::identifier());
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -27,7 +42,7 @@ class FunctionCallResolution implements TreeResolutionInterface
 
         $arguments = [];
         while (!$tokenStream->assert(TokenConstraint::closingBracket())) {
-            if ($tokenStream->assertAny(TokenConstraint::anyString())) {
+            if ($tokenStream->assert(...TokenConstraint::anyString())) {
                 $arguments[] = $tokenStream->consume()->value;
             } else if ($tokenStream->assert(TokenConstraint::identifier())) {
                 $key = $tokenStream->consume()->value;
@@ -38,13 +53,14 @@ class FunctionCallResolution implements TreeResolutionInterface
                     $arguments[$key] = (int) $tokenStream->consume()->value;
                 } else if ($tokenStream->assert(TokenConstraint::float())) {
                     $arguments[$key] = (float) $tokenStream->consume()->value;
-                } else if ($tokenStream->assertAny(TokenConstraint::anyString())) {
+                } else if ($tokenStream->assert(...TokenConstraint::anyString())) {
                     $arguments[$key] = $tokenStream->consume()->value;
                 } else {
-                    throw Exception\UnexpectedTokenException::unmatchedConstraints($tokenStream->watch(), array_merge(
-                        TokenConstraint::anyNumber(),
-                        TokenConstraint::anyString()
-                    ));
+                    throw Exception\UnexpectedTokenException::unmatchedConstraints(
+                        $tokenStream->watch(),
+                        ...TokenConstraint::anyNumber(),
+                        ...TokenConstraint::anyString()
+                    );
                 }
             } else {
                 throw Exception\UnexpectedTokenException::expectedString($tokenStream->watch());

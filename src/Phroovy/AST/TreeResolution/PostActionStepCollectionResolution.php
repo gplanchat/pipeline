@@ -2,10 +2,10 @@
 
 namespace Kiboko\Component\Phroovy\AST\TreeResolution;
 
-use Kiboko\Component\Phroovy\AST\Exception;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 class PostActionStepCollectionResolution implements TreeResolutionInterface
 {
@@ -22,9 +22,22 @@ class PostActionStepCollectionResolution implements TreeResolutionInterface
         $this->stepResolution = $stepResolution;
     }
 
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return TokenConstraint::anyKeyword('always', 'unstable', 'success', 'failure', 'changed');
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assertAny(TokenConstraint::anyKeyword('always', 'unstable', 'success', 'failure', 'changed'));
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -34,7 +47,7 @@ class PostActionStepCollectionResolution implements TreeResolutionInterface
      */
     public function create(TokenStream $tokenStream): Node\NodeInterface
     {
-        $tokenStream->expectAny(TokenConstraint::anyKeyword('always', 'unstable', 'success', 'failure', 'changed'));
+        $tokenStream->expect(...TokenConstraint::anyKeyword('always', 'unstable', 'success', 'failure', 'changed'));
         $tokenStream->expect(TokenConstraint::openingCurlyBraces());
 
         $stepCollection = new Node\StepCollectionNode();
@@ -43,7 +56,7 @@ class PostActionStepCollectionResolution implements TreeResolutionInterface
             $stepCollection->append($this->stepResolution->create($tokenStream));
         }
 
-        $tokenStream->step();
+        $tokenStream->expect(TokenConstraint::closingCurlyBraces());
 
         return $stepCollection;
     }

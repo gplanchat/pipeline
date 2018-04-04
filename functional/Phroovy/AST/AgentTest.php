@@ -21,7 +21,7 @@ PIPE_EOL;
 
         $expected = new AST\PipelineNode(null, new AST\Agent\AnyAgentNode());
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testNoneAgent()
@@ -37,7 +37,7 @@ PIPE_EOL;
 
         $expected = new AST\PipelineNode(null, new AST\Agent\NoneAgentNode());
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testNamedAgent()
@@ -53,7 +53,7 @@ PIPE_EOL;
 
         $expected = new AST\PipelineNode(null, new AST\Agent\AgentNode('docker'));
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testParameteredAgentOnMultipleLines()
@@ -79,7 +79,7 @@ PIPE_EOL;
             'args'  => '-v /tmp:/tmp',
         ]));
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testParameteredAgentOnSingleLine()
@@ -98,7 +98,7 @@ PIPE_EOL;
             'maven:3-alpine',
         ]));
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testAgentOnStageLevel()
@@ -130,6 +130,6 @@ PIPE_EOL;
             new AST\Agent\NoneAgentNode()
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 }

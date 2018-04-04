@@ -56,9 +56,24 @@ class StageResolution implements TreeResolutionInterface
         $this->optionsResolution = $optionsResolution;
     }
 
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return [
+            TokenConstraint::keyword('stage'),
+        ];
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assert(TokenConstraint::keyword('stage'));
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -73,7 +88,7 @@ class StageResolution implements TreeResolutionInterface
         $stage = new Node\StageNode();
 
         $tokenStream->expect(TokenConstraint::openingBracket());
-        if ($tokenStream->assertAny(TokenConstraint::anyString())) {
+        if ($tokenStream->assert(...TokenConstraint::anyString())) {
             $stage->label = $tokenStream->consume()->value;
         } else {
             throw Exception\UnexpectedTokenException::expectedString($tokenStream->watch());
@@ -110,14 +125,15 @@ class StageResolution implements TreeResolutionInterface
 
             throw Exception\UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
-                [
-                    new TokenConstraint(Token::KEYWORD, 'steps'),
-                    new TokenConstraint(Token::KEYWORD, 'environment'),
-                    new TokenConstraint(Token::KEYWORD, 'agent'),
-                    new TokenConstraint(Token::KEYWORD, 'post'),
-                ]
+                ...$this->stepCollectionResolution->constraints(),
+                ...$this->environmentResolution->constraints(),
+                ...$this->agentResolution->constraints(),
+                ...$this->postActionResolution->constraints(),
+                ...$this->optionsResolution->constraints()
             );
         }
+
+        $tokenStream->expect(TokenConstraint::closingCurlyBraces());
 
         return $stage;
     }

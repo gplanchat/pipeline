@@ -56,9 +56,24 @@ class PipelineResolution implements TreeResolutionInterface
         $this->optionsResolution = $optionsResolution;
     }
 
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return [
+            TokenConstraint::keyword('pipeline'),
+        ];
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assert(TokenConstraint::keyword('pipeline'));
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -101,13 +116,11 @@ class PipelineResolution implements TreeResolutionInterface
 
             throw UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
-                [
-                    new TokenConstraint(Token::KEYWORD, 'agent'),
-                    new TokenConstraint(Token::KEYWORD, 'stages'),
-                    new TokenConstraint(Token::KEYWORD, 'environment'),
-                    new TokenConstraint(Token::KEYWORD, 'post'),
-                    new TokenConstraint(Token::KEYWORD, 'options'),
-                ]
+                ...$this->agentResolution->constraints(),
+                ...$this->stageCollectionResolution->constraints(),
+                ...$this->environmentResolution->constraints(),
+                ...$this->postActionResolution->constraints(),
+                ...$this->optionsResolution->constraints()
             );
         }
 

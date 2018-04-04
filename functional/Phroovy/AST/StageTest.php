@@ -22,7 +22,7 @@ PIPE_EOL;
 
         $expected = new AST\PipelineNode();
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testEmptyStage()
@@ -43,7 +43,7 @@ PIPE_EOL;
             new AST\StageNode('Test')
         ]));
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testEmptySteps()
@@ -66,7 +66,7 @@ PIPE_EOL;
             new AST\StageNode('Test')
         ]));
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testStageWithOneStep()
@@ -92,6 +92,40 @@ PIPE_EOL;
             ]))
         ]));
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
+    }
+
+    public function testTwoStagesWithOneStep()
+    {
+        $pipeline =<<<PIPE_EOL
+pipeline {
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Hello, World'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Hello, World'
+            }
+        }
+    }
+}
+PIPE_EOL;
+
+        $lexer = new Lexer();
+        $tree = new Tree();
+
+        $expected = new AST\PipelineNode(new AST\StageCollectionNode([
+            new AST\StageNode('Test', new AST\StepCollectionNode([
+                new AST\StepNode('echo', ['Hello, World']),
+            ])),
+            new AST\StageNode('Build', new AST\StepCollectionNode([
+                new AST\StepNode('echo', ['Hello, World']),
+            ])),
+        ]));
+
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 }

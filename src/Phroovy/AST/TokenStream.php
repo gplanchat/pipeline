@@ -51,7 +51,7 @@ class TokenStream
      *
      * @return bool
      */
-    public function assert(TokenConstraint $constraint): bool
+    public function assertOne(TokenConstraint $constraint): bool
     {
         $token = $this->watch();
         if ($token->token !== $constraint->token) {
@@ -72,10 +72,10 @@ class TokenStream
      *
      * @return bool
      */
-    public function assertAny(iterable $constraints): bool
+    public function assert(TokenConstraint ...$constraints): bool
     {
         foreach ($constraints as $constraint) {
-            if ($this->assert($constraint)) {
+            if ($this->assertOne($constraint)) {
                 return true;
             }
         }
@@ -96,9 +96,9 @@ class TokenStream
      *
      * @param TokenConstraint[]|iterable $constraints
      */
-    public function stepUntil(iterable $constraints): void
+    public function stepUntil(TokenConstraint ...$constraints): void
     {
-        while (!$this->assertAny($constraints)) {
+        while (!$this->assert(...$constraints)) {
             $this->step();
         }
     }
@@ -117,34 +117,18 @@ class TokenStream
     }
 
     /**
-     * @param TokenConstraint $constraint
-     *
-     * @throws Exception\UnexpectedTokenException
-     *
-     * @return Token
-     */
-    public function expect(TokenConstraint $constraint): Token
-    {
-        if ($this->assert($constraint)) {
-            return $this->consume();
-        }
-
-        throw Exception\UnexpectedTokenException::unmatchedConstraint($this->watch(), $constraint);
-    }
-
-    /**
      * @param TokenConstraint[]|iterable $constraints
      *
      * @throws Exception\UnexpectedTokenException
      *
      * @return Token
      */
-    public function expectAny(iterable $constraints): Token
+    public function expect(TokenConstraint ...$constraints): Token
     {
-        if ($this->assertAny($constraints)) {
+        if ($this->assert(...$constraints)) {
             return $this->consume();
         }
 
-        throw Exception\UnexpectedTokenException::unmatchedConstraints($this->watch(), $constraints);
+        throw Exception\UnexpectedTokenException::unmatchedConstraints($this->watch(), ...$constraints);
     }
 }

@@ -20,7 +20,7 @@ PIPE_EOL;
 
         $expected = new PipelineNode();
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testEmptyPipelineWithMultiLineComment()
@@ -36,7 +36,7 @@ PIPE_EOL;
 
         $expected = new PipelineNode();
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 
     public function testEmptyPipelineWithSingleLineComment()
@@ -52,6 +52,6 @@ PIPE_EOL;
 
         $expected = new PipelineNode();
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 }

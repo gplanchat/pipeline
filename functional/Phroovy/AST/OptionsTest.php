@@ -34,6 +34,6 @@ PIPE_EOL;
             ])
         );
 
-        $this->assertTreeHasNode($expected, $tree->compile($lexer->tokenize($pipeline)));
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
 }

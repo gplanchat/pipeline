@@ -21,9 +21,24 @@ class StageCollectionResolution implements TreeResolutionInterface
         $this->stageResolution = $stageResolution;
     }
 
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return [
+            TokenConstraint::keyword('stages'),
+        ];
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assert(TokenConstraint::keyword('stages'));
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -42,7 +57,7 @@ class StageCollectionResolution implements TreeResolutionInterface
             $stageCollection->append($this->stageResolution->create($tokenStream));
         }
 
-        $tokenStream->expect(TokenConstraint::closingCurlyBraces());
+        //$tokenStream->expect(TokenConstraint::closingCurlyBraces());
 
         return $stageCollection;
     }

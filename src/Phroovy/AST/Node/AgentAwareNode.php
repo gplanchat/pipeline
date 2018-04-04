@@ -5,7 +5,7 @@ namespace Kiboko\Component\Phroovy\AST\Node;
 trait AgentAwareNode
 {
     /**
-     * @var Agent\AgentNode
+     * @var Agent\AgentNodeInterface
      */
     public $agent;
 }

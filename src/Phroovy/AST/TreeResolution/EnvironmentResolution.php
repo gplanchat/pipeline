@@ -6,6 +6,7 @@ use Kiboko\Component\Phroovy\AST\Exception;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 /**
  * Required: yes
@@ -29,9 +30,24 @@ class EnvironmentResolution implements TreeResolutionInterface
         $this->functionCallResolution = $functionCallResolution;
     }
 
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
+    {
+        return [
+            TokenConstraint::keyword('environment'),
+        ];
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return bool
+     */
     public function assert(TokenStream $tokenStream): bool
     {
-        return $tokenStream->assert(TokenConstraint::keyword('environment'));
+        return $tokenStream->assert(...$this->constraints());
     }
 
     /**
@@ -49,7 +65,7 @@ class EnvironmentResolution implements TreeResolutionInterface
         while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
             $variable = $tokenStream->expect(TokenConstraint::identifier());
             $tokenStream->expect(TokenConstraint::operator('='));
-            if ($tokenStream->assertAny(TokenConstraint::anyString())) {
+            if ($tokenStream->assert(...TokenConstraint::anyString())) {
                 $childNode = $tokenStream->consume()->value;
             } else if ($this->functionCallResolution->assert($tokenStream)) {
                 $childNode = $this->functionCallResolution->create($tokenStream);

@@ -5,6 +5,7 @@ namespace Kiboko\Component\Phroovy\AST\TreeResolution;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
+use Kiboko\Component\Phroovy\Lexer\Token;
 
 class StepCollectionResolution implements TreeResolutionInterface
 {
@@ -21,15 +22,30 @@ class StepCollectionResolution implements TreeResolutionInterface
         $this->stepResolution = $stepResolution;
     }
 
-    public function assert(TokenStream $tokenStream): bool
+    /**
+     * @return Token[]|iterable
+     */
+    public function constraints(): iterable
     {
-        return $tokenStream->assert(TokenConstraint::keyword('steps'));
+        return [
+            TokenConstraint::keyword('steps'),
+        ];
     }
 
     /**
      * @param TokenStream $tokenStream
      *
-     * @return Node\NodeInterface
+     * @return bool
+     */
+    public function assert(TokenStream $tokenStream): bool
+    {
+        return $tokenStream->assert(...$this->constraints());
+    }
+
+    /**
+     * @param TokenStream $tokenStream
+     *
+     * @return Node\StepCollectionNode
      */
     public function create(TokenStream $tokenStream): Node\NodeInterface
     {
