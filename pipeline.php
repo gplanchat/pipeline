@@ -30,7 +30,7 @@ $processor = new InterruptibleProcessor(
 );
 
 foreach ($config->compile($nodeStream) as $pipeline) {
-    $pipeline->run($executionContext, $processor);
+    $pipelineExecution = $pipeline->run($executionContext, $processor);
 }
 
 $hypervisor->run($loop);

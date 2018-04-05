@@ -1,24 +1,36 @@
 pipeline {
-    agent swarm
+    agent {
+        kdc {
+            compose 'docker-compose.yaml'
+        }
+    }
 
     stages {
         stage('Unit tests') {
             steps {
-                sh 'composer' 'install'
-                sh 'phpunit' '--no-interaction' '--bootstrap=vendor/autoload.php' 'unit/'
+                sh composer install
+                phpunit --bootstrap=vendor/autoload.php unit/
             }
         }
         stage('Functional tests') {
             steps {
-                sh 'composer' 'install'
-                sh 'phpunit' '--no-interaction' '--bootstrap=vendor/autoload.php' 'functional/'
+                sh composer install
+                phpunit --bootstrap=vendor/autoload.php functional/
             }
         }
         stage('Spec tests') {
             steps {
-                sh 'composer' 'install'
-                sh 'phpspec' '--no-interaction' 'run'
+                sh composer install
+                phpspec --no-interaction run
             }
+        }
+    }
+    post {
+        success {
+            cap production deploy
+        }
+        failure {
+            cap production rollback
         }
     }
 }

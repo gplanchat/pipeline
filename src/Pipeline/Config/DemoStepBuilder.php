@@ -24,6 +24,9 @@ class DemoStepBuilder implements StepBuilderInterface
         if ($node->type === 'phpunit') {
             return new CommandStep(array_merge(['phpunit'], $node->arguments));
         }
+        if ($node->type === 'phpspec') {
+            return new CommandStep(array_merge(['phpspec'], $node->arguments));
+        }
 
         throw new \RuntimeException('Unknown step type.');
     }
