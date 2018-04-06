@@ -54,7 +54,7 @@ class StageCollectionResolution implements TreeResolutionInterface
         $stageCollection = new Node\StageCollectionNode();
 
         while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
-            $stageCollection->append($this->stageResolution->create($tokenStream));
+            $stageCollection->push($this->stageResolution->create($tokenStream));
         }
 
         //$tokenStream->expect(TokenConstraint::closingCurlyBraces());

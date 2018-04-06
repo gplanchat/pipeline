@@ -10,6 +10,8 @@ final class Lexer
         Token::OPERATOR => '/\\s*(=|,|:)(?=\\s*|$)/',
         Token::OPENING_CURLY_BRACES => '/\\s*(\\{)(?=\\s*|$)/',
         Token::CLOSING_CURLY_BRACES => '/\\s*(})(?=\\s*|$)/',
+        Token::OPENING_SQUARE_BRACKET => '/\\s*(\\[)(?=\\s*|$)/',
+        Token::CLOSING_SQUARE_BRACKET => '/\\s*(])(?=\\s*|$)/',
         Token::OPENING_BRACKET => '/(\\()(?=\\s*|$)/',
         Token::CLOSING_BRACKET => '/(\\))(?=\\s*|$)/',
         Token::NUMBER_FLOAT => '/\\s*(0|[+-]?([1-9][0-9]*)?\\.[0-9]*)(?=\\s*|$)/',

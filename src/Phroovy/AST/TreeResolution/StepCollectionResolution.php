@@ -55,7 +55,7 @@ class StepCollectionResolution implements TreeResolutionInterface
         $stepCollection = new Node\StepCollectionNode();
 
         while (!$tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
-            $stepCollection->append($this->stepResolution->create($tokenStream));
+            $stepCollection->push($this->stepResolution->create($tokenStream));
         }
 
         $tokenStream->expect(TokenConstraint::closingCurlyBraces());

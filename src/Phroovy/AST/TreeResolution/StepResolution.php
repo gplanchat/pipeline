@@ -2,6 +2,7 @@
 
 namespace Kiboko\Component\Phroovy\AST\TreeResolution;
 
+use Kiboko\Component\Phroovy\AST\Exception\UnexpectedTokenException;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
@@ -9,6 +10,19 @@ use Kiboko\Component\Phroovy\Lexer\Token;
 
 class StepResolution implements TreeResolutionInterface
 {
+    /**
+     * @var StaticValueResolutionFacade
+     */
+    private $arrayResolution;
+
+    /**
+     * @param StaticValueResolutionFacade $arrayResolution
+     */
+    public function __construct(StaticValueResolutionFacade $arrayResolution)
+    {
+        $this->arrayResolution = $arrayResolution;
+    }
+
     /**
      * @return Token[]|iterable
      */
@@ -36,13 +50,14 @@ class StepResolution implements TreeResolutionInterface
     {
         $step = new Node\StepNode($tokenStream->expect(TokenConstraint::identifier())->value);
 
-        $tokenStream->keepNewlines();
-        while ($tokenStream->assert(...TokenConstraint::anyStringOrIdentifier())) {
-            $step->arguments[] = $tokenStream->consume()->value;
+        if ($this->arrayResolution->assert($tokenStream)) {
+            $step->arguments = $this->arrayResolution->create($tokenStream);
+        } else {
+            UnexpectedTokenException::unmatchedConstraints(
+                $tokenStream->watch(),
+                ...$this->arrayResolution->constraints()
+            );
         }
-        $tokenStream->skipNewlines();
-
-        $tokenStream->expect(TokenConstraint::newLine());
 
         return $step;
     }

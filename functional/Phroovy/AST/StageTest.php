@@ -88,7 +88,9 @@ PIPE_EOL;
 
         $expected = new AST\PipelineNode(new AST\StageCollectionNode([
             new AST\StageNode('Test', new AST\StepCollectionNode([
-                new AST\StepNode('echo', ['Hello, World'])
+                new AST\StepNode('echo', new AST\StaticValue\ListNode([
+                    new AST\StaticValue\StringNode('Hello, World'),
+                ]))
             ]))
         ]));
 
@@ -119,10 +121,14 @@ PIPE_EOL;
 
         $expected = new AST\PipelineNode(new AST\StageCollectionNode([
             new AST\StageNode('Test', new AST\StepCollectionNode([
-                new AST\StepNode('echo', ['Hello, World']),
+                new AST\StepNode('echo', new AST\StaticValue\ListNode([
+                    new AST\StaticValue\StringNode('Hello, World'),
+                ]))
             ])),
             new AST\StageNode('Build', new AST\StepCollectionNode([
-                new AST\StepNode('echo', ['Hello, World']),
+                new AST\StepNode('echo', new AST\StaticValue\ListNode([
+                    new AST\StaticValue\StringNode('Hello, World'),
+                ]))
             ])),
         ]));
 

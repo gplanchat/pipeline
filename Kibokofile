@@ -9,13 +9,13 @@ pipeline {
         stage('Unit tests') {
             steps {
                 sh composer install
-                phpunit --bootstrap=vendor/autoload.php unit/
+                phpunit { bootstrap: 'vendor/autoload.php', path: 'unit/' }
             }
         }
         stage('Functional tests') {
             steps {
                 sh composer install
-                phpunit --bootstrap=vendor/autoload.php functional/
+                phpunit { bootstrap: 'vendor/autoload.php', path: 'functional/' }
             }
         }
         stage('Spec tests') {

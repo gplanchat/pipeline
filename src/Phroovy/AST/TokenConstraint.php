@@ -123,6 +123,22 @@ class TokenConstraint
     /**
      * @return TokenConstraint
      */
+    public static function openingSquareBracket(): TokenConstraint
+    {
+        return new self(Token::OPENING_SQUARE_BRACKET);
+    }
+
+    /**
+     * @return TokenConstraint
+     */
+    public static function closingSquareBracket(): TokenConstraint
+    {
+        return new self(Token::CLOSING_SQUARE_BRACKET);
+    }
+
+    /**
+     * @return TokenConstraint
+     */
     public static function openingBracket(): TokenConstraint
     {
         return new self(Token::OPENING_BRACKET);

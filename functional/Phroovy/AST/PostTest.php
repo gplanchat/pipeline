@@ -4,6 +4,9 @@ namespace functional\Kiboko\Component\Phroovy\AST;
 
 use Kiboko\Component\Phroovy\AST\Node\PipelineNode;
 use Kiboko\Component\Phroovy\AST\Node\PostActionNode;
+use Kiboko\Component\Phroovy\AST\Node\StaticValue\HashMapNode;
+use Kiboko\Component\Phroovy\AST\Node\StaticValue\ListNode;
+use Kiboko\Component\Phroovy\AST\Node\StaticValue\StringNode;
 use Kiboko\Component\Phroovy\AST\Node\StepCollectionNode;
 use Kiboko\Component\Phroovy\AST\Node\StepNode;
 use Kiboko\Component\Phroovy\AST\Tree;
@@ -32,7 +35,9 @@ PIPE_EOL;
             null,
             new PostActionNode(
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ])
             )
         );
@@ -62,7 +67,9 @@ PIPE_EOL;
             new PostActionNode(
                 null,
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ])
             )
         );
@@ -93,7 +100,9 @@ PIPE_EOL;
                 null,
                 null,
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ])
             )
         );
@@ -125,7 +134,9 @@ PIPE_EOL;
                 null,
                 null,
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ])
             )
         );
@@ -158,7 +169,9 @@ PIPE_EOL;
                 null,
                 null,
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ])
             )
         );
@@ -190,13 +203,17 @@ PIPE_EOL;
             null,
             new PostActionNode(
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ]),
                 null,
                 null,
                 null,
                 new StepCollectionNode([
-                    new StepNode('echo', ['I will always say Hello again!'])
+                    new StepNode('echo', new ListNode([
+                        new StringNode('I will always say Hello again!'),
+                    ]))
                 ])
             )
         );
