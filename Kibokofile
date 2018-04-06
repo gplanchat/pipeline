@@ -21,7 +21,7 @@ pipeline {
         stage('Spec tests') {
             steps {
                 sh composer install
-                phpspec --no-interaction run
+                phpspec { path: '.' }
             }
         }
     }

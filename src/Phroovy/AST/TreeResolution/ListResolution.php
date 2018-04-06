@@ -9,19 +9,6 @@ use Kiboko\Component\Phroovy\AST\TokenStream;
 
 class ListResolution implements TreeResolutionInterface
 {
-    /**
-     * @var StaticValueResolutionFacade
-     */
-    private $staticValueFacade;
-
-    /**
-     * @param StaticValueResolutionFacade $staticValueFacade
-     */
-    public function __construct(StaticValueResolutionFacade $staticValueFacade)
-    {
-        $this->staticValueFacade = $staticValueFacade;
-    }
-
     public function constraints(): iterable
     {
         return TokenConstraint::anyStringOrIdentifier();

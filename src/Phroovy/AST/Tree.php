@@ -20,16 +20,18 @@ class Tree
     private $optionsResolution;
     private $functionCallResolution;
     private $arrayResolution;
+    private $listResolution;
 
     public function __construct()
     {
         $this->arrayResolution = new TreeResolution\StaticValueResolutionFacade();
         $this->arrayResolution->attach(new TreeResolution\HashMapResolution($this->arrayResolution));
         $this->arrayResolution->attach(new TreeResolution\CollectionResolution($this->arrayResolution));
-        $this->arrayResolution->attach(new TreeResolution\ListResolution($this->arrayResolution));
+        $this->listResolution = new TreeResolution\ListResolution();
 
         $this->stepResolution = new TreeResolution\StepResolution(
-            $this->arrayResolution
+            $this->arrayResolution,
+            $this->listResolution
         );
 
         $this->stepCollectionResolution = new TreeResolution\StepCollectionResolution(

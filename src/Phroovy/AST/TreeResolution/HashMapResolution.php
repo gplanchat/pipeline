@@ -45,11 +45,12 @@ class HashMapResolution implements TreeResolutionInterface
         $hashMapNode = new Node\StaticValue\HashMapNode();
         while (true) {
             $key = $tokenStream->expect(TokenConstraint::identifier())->value;
-            var_dump($tokenStream->expect(TokenConstraint::identifier())->value);
             $tokenStream->expect(TokenConstraint::operator(':'));
 
             if ($this->staticValueFacade->assert($tokenStream)) {
                 $hashMapNode[$key] = $this->staticValueFacade->create($tokenStream);
+            } else if ($tokenStream->assert(...TokenConstraint::anyString())) {
+                $hashMapNode[$key] = new Node\StaticValue\StringNode($tokenStream->consume()->value);
             } else {
                 throw UnexpectedTokenException::unmatchedConstraints(
                     $tokenStream->watch(),

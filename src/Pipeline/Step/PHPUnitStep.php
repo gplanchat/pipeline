@@ -56,7 +56,7 @@ class PHPUnitStep implements StepInterface
         yield 'phpunit';
 
         if ($this->bootstrap !== null) {
-            yield sprintf('--botstrap=%s', $this->bootstrap);
+            yield sprintf('--bootstrap=%s', $this->bootstrap);
         }
 
         foreach ($this->filter as $filter) {

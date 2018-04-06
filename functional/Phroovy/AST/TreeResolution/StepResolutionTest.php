@@ -41,9 +41,8 @@ class StepResolutionTest extends TestCase
         $facade = new StaticValueResolutionFacade();
         $facade->attach(new HashMapResolution($facade));
         $facade->attach(new CollectionResolution($facade));
-        $facade->attach(new ListResolution($facade));
 
-        $resolution = new StepResolution($facade);
+        $resolution = new StepResolution($facade, new ListResolution());
 
         $actual = $resolution->create(new TokenStream(new \ArrayIterator($source)));
 

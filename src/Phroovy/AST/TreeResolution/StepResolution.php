@@ -16,11 +16,20 @@ class StepResolution implements TreeResolutionInterface
     private $arrayResolution;
 
     /**
-     * @param StaticValueResolutionFacade $arrayResolution
+     * @var ListResolution
      */
-    public function __construct(StaticValueResolutionFacade $arrayResolution)
-    {
+    private $listResolution;
+
+    /**
+     * @param StaticValueResolutionFacade $arrayResolution
+     * @param ListResolution $listResolution
+     */
+    public function __construct(
+        StaticValueResolutionFacade $arrayResolution,
+        ListResolution $listResolution
+    ) {
         $this->arrayResolution = $arrayResolution;
+        $this->listResolution = $listResolution;
     }
 
     /**
@@ -52,10 +61,13 @@ class StepResolution implements TreeResolutionInterface
 
         if ($this->arrayResolution->assert($tokenStream)) {
             $step->arguments = $this->arrayResolution->create($tokenStream);
+        } else if ($this->listResolution->assert($tokenStream)) {
+            $step->arguments = $this->listResolution->create($tokenStream);
         } else {
             UnexpectedTokenException::unmatchedConstraints(
                 $tokenStream->watch(),
-                ...$this->arrayResolution->constraints()
+                ...$this->arrayResolution->constraints(),
+                ...$this->listResolution->constraints()
             );
         }
 
