@@ -40,8 +40,6 @@ class ComposerStep implements StepInterface
         ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
-        echo new Command(...$this->buildCommandArguments());
-
         $processHypervisor->enqueue(
             $executionContext->build(
                 new Command(...$this->buildCommandArguments())

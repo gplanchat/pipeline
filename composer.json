@@ -13,7 +13,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/process": "^2.8",
         "react/promise": "^2.5",
         "react/child-process": "^0.5"
     },

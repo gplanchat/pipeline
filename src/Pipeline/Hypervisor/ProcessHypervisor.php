@@ -136,7 +136,7 @@ class ProcessHypervisor implements ProcessHypervisorInterface
             try {
                 $process->start($loop);
                 $process->stdout->on('data', function($data) {
-                    echo $data;
+                    file_put_contents('php://output', $data);
                 });
             } catch (\RuntimeException $e) {
                 throw new UnhandledProcessException(
