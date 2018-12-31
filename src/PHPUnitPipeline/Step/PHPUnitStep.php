@@ -71,13 +71,6 @@ class PHPUnitStep implements StepInterface
 
         $this->registerProcess($this->process);
 
-        $this->then(function($resultFiles) {
-            var_dump($resultFiles);
-            foreach ($resultFiles as $file) {
-                stream_copy_to_stream(fopen($file, 'r'), fopen('php://stdout', 'w'));
-            }
-        });
-
         return $executionContext;
     }
 
