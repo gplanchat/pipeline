@@ -17,16 +17,37 @@ trait ThenableStepTrait
      */
     private $otherwiseCallbacks = [];
 
-    public function then(callable $callback): StepInterface
+    public function then(callable ...$callbacks): StepInterface
     {
-        $this->thenCallbacks[] = $callback;
+        $this->thenCallbacks = array_merge(
+            $this->thenCallbacks,
+            $callbacks
+        );
 
         return $this;
     }
 
-    public function otherwise(callable $callback): StepInterface
+    public function otherwise(callable ...$callbacks): StepInterface
     {
-        $this->otherwiseCallbacks[] = $callback;
+        $this->otherwiseCallbacks = array_merge(
+            $this->otherwiseCallbacks,
+            $callbacks
+        );
+
+        return $this;
+    }
+
+    public function always(callable ...$callbacks): StepInterface
+    {
+        $this->thenCallbacks = array_merge(
+            $this->thenCallbacks,
+            $callbacks
+        );
+
+        $this->otherwiseCallbacks = array_merge(
+            $this->otherwiseCallbacks,
+            $callbacks
+        );
 
         return $this;
     }
@@ -36,14 +57,14 @@ trait ThenableStepTrait
         $process->on('exit', function($exitCode, $termSignal) {
             if ($exitCode === 0) {
                 foreach ($this->thenCallbacks as $callback) {
-                    $callback($this->resultFiles);
+                    $callback($this);
                 }
+
+                return;
             }
 
-            if ($exitCode === 0) {
-                foreach ($this->otherwiseCallbacks as $callback) {
-                    $callback($this->resultFiles, $exitCode, $termSignal);
-                }
+            foreach ($this->otherwiseCallbacks as $callback) {
+                $callback($this, $exitCode, $termSignal);
             }
         });
     }

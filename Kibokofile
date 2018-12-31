@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        kdc {
+        docker {
             compose 'docker-compose.yaml'
         }
     }
@@ -12,19 +12,28 @@ pipeline {
                 phpunit { bootstrap: 'vendor/autoload.php', path: 'unit/' }
             }
         }
+
         stage('Functional tests') {
             steps {
                 sh composer install
                 phpunit { bootstrap: 'vendor/autoload.php', path: 'functional/' }
             }
         }
+
         stage('Spec tests') {
             steps {
                 sh composer install
                 phpspec { path: '.' }
             }
         }
+
+        stage('Say Hello world') {
+            steps {
+                sh echo 'Hello world'
+            }
+        }
     }
+
     post {
         success {
             cap production deploy

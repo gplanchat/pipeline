@@ -18,7 +18,9 @@ interface StepInterface
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface;
 
-    public function then(callable $callback): StepInterface;
+    public function then(callable ...$callbacks): StepInterface;
 
-    public function otherwise(callable $callback): StepInterface;
+    public function otherwise(callable ...$callbacks): StepInterface;
+
+    public function always(callable ...$callbacks): StepInterface;
 }

@@ -99,4 +99,12 @@ class PHPUnitStep implements StepInterface
             $config['filter'] ?? []
         );
     }
+
+    /**
+     * @return string[]
+     */
+    public function getResultFiles(): array
+    {
+        return $this->resultFiles;
+    }
 }

@@ -5,9 +5,12 @@ namespace Project\Step;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use Kiboko\Component\Pipeline\Step\ThenableStepTrait;
 
 class BazStep implements StepInterface
 {
+    use ThenableStepTrait;
+
     private $param;
 
     /**
