@@ -6,12 +6,11 @@ use Kiboko\Component\Phroovy\AST\Exception;
 use Kiboko\Component\Phroovy\AST\Node;
 use Kiboko\Component\Phroovy\AST\TokenConstraint;
 use Kiboko\Component\Phroovy\AST\TokenStream;
-use Kiboko\Component\Phroovy\Lexer\Token;
 
 class FunctionCallResolution implements TreeResolutionInterface
 {
     /**
-     * @return Token[]|iterable
+     * @return TokenConstraint[]|iterable
      */
     public function constraints(): iterable
     {

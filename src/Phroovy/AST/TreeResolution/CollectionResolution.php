@@ -22,6 +22,9 @@ class CollectionResolution implements TreeResolutionInterface
         $this->staticValueFacade = $staticValueFacade;
     }
 
+    /**
+     * @return TokenConstraint[]|iterable
+     */
     public function constraints(): iterable
     {
         return [

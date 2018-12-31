@@ -7,7 +7,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use PHPUnit\Util\InvalidArgumentHelper;
 
-class TestCase extends PHPUnitTestCase
+abstract class TestCase extends PHPUnitTestCase
 {
     public function firstElement(iterable $stream)
     {

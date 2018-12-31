@@ -132,6 +132,7 @@ class ProcessHypervisor implements ProcessHypervisorInterface
      */
     private function startProcesses(LoopInterface $loop, iterable $processes): void
     {
+        /** @var Process $process */
         foreach ($processes as $process) {
             try {
                 $process->start($loop);

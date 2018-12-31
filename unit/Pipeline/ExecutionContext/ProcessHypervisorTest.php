@@ -3,9 +3,12 @@
 namespace test\Kiboko\Component\Pipeline\ExecutionContext;
 
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use React\ChildProcess\Process;
 use React\EventLoop\LoopInterface;
+use React\Stream\ReadableResourceStream;
+use React\Stream\WritableResourceStream;
 
 class ProcessHypervisorTest extends TestCase
 {
@@ -38,15 +41,53 @@ class ProcessHypervisorTest extends TestCase
             ->with()
             ->willReturn($shouldBeInterrupted);
 
+        $this->buildStreamResourcesMock($loopMock, $processMock);
+
         return $processMock;
     }
 
-    private function buildCallbackMock()
+    private function buildStreamResourcesMock(LoopInterface $loopMock, Process $processMock)
     {
-        $builder = $this->getMockBuilder('object')
-            ->setMethods(['__invoke']);
+        $streamCloseHandler = function () use (&$closeCount, $loopMock, $processMock) {
+            $closeCount++;
 
-        $mock = $builder->getMock();
+            if ($closeCount < 2) {
+                return;
+            }
+
+            // process already closed => report immediately
+            if (!$processMock->isRunning()) {
+                $processMock->close();
+                $processMock->emit('exit', [$processMock->getExitCode(), $processMock->getTermSignal()]);
+                return;
+            }
+
+            // close not detected immediately => check regularly
+            $loopMock->addPeriodicTimer(.1, function ($timer) use ($processMock, $loopMock) {
+                if (!$processMock->isRunning()) {
+                    $loopMock->cancelTimer($timer);
+                    $processMock->close();
+                    $processMock->emit('exit', [$processMock->getExitCode(), $processMock->getTermSignal()]);
+                }
+            });
+        };
+
+        $processMock->stdin = new WritableResourceStream(fopen('php://temp', 'w'), $loopMock);
+        $processMock->stdout = new ReadableResourceStream(fopen('php://temp', 'w'), $loopMock);
+        $processMock->stderr = new ReadableResourceStream(fopen('php://temp', 'w'), $loopMock);
+
+        $processMock->stdout->on('close', $streamCloseHandler);
+        $processMock->stderr->on('close', $streamCloseHandler);
+    }
+
+    /**
+     * @return LoopInterface|MockObject
+     */
+    private function buildLoopMock(): LoopInterface
+    {
+        $builder = $this->getMockBuilder(LoopInterface::class);
+
+        $mock = $builder->getMockForAbstractClass();
 
         return $mock;
     }
@@ -63,25 +104,9 @@ class ProcessHypervisorTest extends TestCase
             $shortRunningProcess = $this->buildRunningProcessMock(1)
         );
 
-        $callback = $this->buildCallbackMock();
+        $loop = $this->buildLoopMock();
 
-        $callback->expects($this->exactly(3))
-            ->method('__invoke')
-            ->willReturn(true);
-
-        $callback->expects($this->at(0))
-            ->method('__invoke')
-            ->with($manager, []);
-
-        $callback->expects($this->at(1))
-            ->method('__invoke')
-            ->with($manager, [$shortRunningProcess]);
-
-        $callback->expects($this->at(2))
-            ->method('__invoke')
-            ->with($manager, [$longRunningProcess]);
-
-        $manager->run($callback);
+        $manager->run($loop);
     }
 
     public function testInterruptedProcesses()
@@ -92,18 +117,7 @@ class ProcessHypervisorTest extends TestCase
             $longRunningProcess = $this->buildRunningProcessMock(1, true)
         );
 
-        $callback = $this->buildCallbackMock();
-
-        $callback->expects($this->at(0))
-            ->method('__invoke')
-            ->willReturn(true);
-
-        $callback->expects($this->at(1))
-            ->method('__invoke')
-            ->willReturn(false);
-
-        $callback->expects($this->exactly(2))
-            ->method('__invoke');
+        $callback = $this->buildLoopMock();
 
         $manager->run($callback);
     }
@@ -124,27 +138,7 @@ class ProcessHypervisorTest extends TestCase
             $thirdProcess = $this->buildRunningProcessMock(3)
         );
 
-        $callback = $this->buildCallbackMock();
-
-        $callback->expects($this->exactly(7))
-            ->method('__invoke')
-            ->willReturn(true);
-
-        $callback->expects($this->at(0))
-            ->method('__invoke')
-            ->with($manager, [], 3);
-
-        $callback->expects($this->at(2))
-            ->method('__invoke')
-            ->with($manager, [$firstProcess], 2);
-
-        $callback->expects($this->at(3))
-            ->method('__invoke')
-            ->with($manager, [$secondProcess], 1);
-
-        $callback->expects($this->at(6))
-            ->method('__invoke')
-            ->with($manager, [$thirdProcess], 0);
+        $callback = $this->buildLoopMock();
 
         $manager->run($callback);
     }

@@ -7,7 +7,7 @@ use Kiboko\Component\Pipeline\Plumbing\StepInterface;
 use Kiboko\Component\Pipeline\Step\CommandStep;
 use Kiboko\Component\Pipeline\Step\CopyStep;
 use Kiboko\Component\Pipeline\Step\PHPSpecStep;
-use Kiboko\Component\Pipeline\Step\PHPUnitStep;
+use Kiboko\Component\PHPUnitPipeline\Step\PHPUnitStep;
 
 class DemoStepBuilder implements StepBuilderInterface
 {

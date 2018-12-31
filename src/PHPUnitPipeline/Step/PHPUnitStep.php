@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiboko\Component\Pipeline\Step;
+namespace Kiboko\Component\PHPUnitPipeline\Step;
 
 use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
@@ -29,8 +29,11 @@ class PHPUnitStep implements StepInterface
      * @param string $bootstrap
      * @param string[] $filter
      */
-    public function __construct(string $path, string $bootstrap = null, array $filter = [])
-    {
+    public function __construct(
+        string $path,
+        string $bootstrap = null,
+        array $filter = []
+    ) {
         $this->path = $path;
         $this->bootstrap = $bootstrap;
         $this->filter = $filter;
@@ -61,7 +64,7 @@ class PHPUnitStep implements StepInterface
             yield sprintf('--filter=%s', $filter);
         }
 
-        yield sprintf('--log-junit=a.xml', uniqid('phpunit_'));
+        yield sprintf('--log-junit=%s.xml', uniqid('phpunit_'));
 
         yield $this->path;
     }

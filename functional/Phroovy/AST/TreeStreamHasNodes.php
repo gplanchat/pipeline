@@ -2,11 +2,10 @@
 
 namespace functional\Kiboko\Component\Phroovy\AST;
 
-use Kiboko\Component\Phroovy\Lexer\Token;
 use PHPUnit\Framework\Constraint\Constraint;
 use SebastianBergmann\Diff\Differ;
 
-class TreeStreamHasNodes extends Constraint
+final class TreeStreamHasNodes extends Constraint
 {
     /**
      * @var mixed

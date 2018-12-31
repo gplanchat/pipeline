@@ -22,6 +22,9 @@ class StaticValueResolutionFacade implements TreeResolutionInterface
         $this->handlers[] = $handler;
     }
 
+    /**
+     * @return TokenConstraint[]|iterable
+     */
     public function constraints(): iterable
     {
         return array_merge(

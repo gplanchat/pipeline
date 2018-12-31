@@ -31,7 +31,7 @@ class OptionsResolution implements TreeResolutionInterface
     }
 
     /**
-     * @return Token[]|iterable
+     * @return TokenConstraint[]|iterable
      */
     public function constraints(): iterable
     {
