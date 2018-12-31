@@ -30,13 +30,13 @@ $runner = new \Kiboko\Component\Pipeline\PipelineRunner(
 
 //$runner->run($pipeline, new \Kiboko\Component\Pipeline\ExecutionContext\ShellExecutionContext());
 
-$lexer = new \Kiboko\Component\Jenkinsfile\Lexer\Lexer();
+$lexer = new \Kiboko\Component\Phroovy\Lexer\Lexer();
 
 //var_dump(iterator_to_array($lexer->tokenize(file_get_contents(__DIR__ . '/Jenkinsfile'))));
 
-$ast = new \Kiboko\Component\Jenkinsfile\AST\Tree();
+$ast = new \Kiboko\Component\Phroovy\AST\Tree();
 
-var_dump($ast->compile($lexer->tokenize(file_get_contents(__DIR__ . '/Jenkinsfile'))));
+var_dump($ast->compile($lexer->tokenize(file_get_contents(__DIR__ . '/Kibokofile'))));
 
 $config = new \Kiboko\Component\Pipeline\Config\Config(new \Kiboko\Component\Pipeline\Config\DemoStepBuilder());
 
