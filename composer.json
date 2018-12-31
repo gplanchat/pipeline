@@ -23,6 +23,7 @@
     "autoload": {
         "psr-4": {
             "Kiboko\\Component\\Pipeline\\": "src/Pipeline",
+            "Kiboko\\Component\\PHPSpecPipeline\\": "src/PHPSpecPipeline",
             "Kiboko\\Component\\PHPUnitPipeline\\": "src/PHPUnitPipeline",
             "Kiboko\\Component\\Phroovy\\": "src/Phroovy",
             "Kiboko\\Component\\JUnitXMLFile\\": "src/JUnitXMLFile"

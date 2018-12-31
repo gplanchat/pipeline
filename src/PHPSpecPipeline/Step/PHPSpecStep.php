@@ -1,11 +1,12 @@
 <?php
 
-namespace Kiboko\Component\Pipeline\Step;
+namespace Kiboko\Component\PHPSpecPipeline\Step;
 
 use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use Kiboko\Component\Pipeline\Step\ThenableStepTrait;
 use React\ChildProcess\Process;
 
 class PHPSpecStep implements StepInterface
