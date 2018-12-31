@@ -6,13 +6,16 @@ use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use React\ChildProcess\Process;
 
 class CommandStep implements StepInterface
 {
+    use ThenableStepTrait;
+
     /**
      * @var string[]
      */
-    private $command;
+    private $shellCommand;
 
     /**
      * @var string[]
@@ -20,12 +23,22 @@ class CommandStep implements StepInterface
     private $environment;
 
     /**
-     * @param string[] $environment
-     * @param string[] $command
+     * @var Command
      */
-    public function __construct(array $command, array $environment = [])
+    private $command;
+
+    /**
+     * @var Process
+     */
+    private $process;
+
+    /**
+     * @param string[] $shellCommand
+     * @param string[] $environment
+     */
+    public function __construct(array $shellCommand, array $environment = [])
     {
-        $this->command = $command;
+        $this->shellCommand = $shellCommand;
         $this->environment = $environment;
     }
 
@@ -34,18 +47,20 @@ class CommandStep implements StepInterface
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         $processHypervisor->enqueue(
-            $executionContext->build(
-                new Command(
-                    ...$this->command
-                )
+            $this->process = $executionContext->build(
+                $this->command = new Command(...$this->shellCommand)
             )
         );
+
+        $this->registerProcess($this->process);
 
         return $executionContext;
     }
 
     public static function fromConfig(array $config)
     {
-        return new self($config);
+        return new self(
+            $config
+        );
     }
 }

@@ -6,9 +6,12 @@ use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use React\ChildProcess\Process;
 
 class CopyStep implements StepInterface
 {
+    use ThenableStepTrait;
+
     /**
      * @var string
      */
@@ -18,6 +21,16 @@ class CopyStep implements StepInterface
      * @var string
      */
     private $to;
+
+    /**
+     * @var Command
+     */
+    private $command;
+
+    /**
+     * @var Process
+     */
+    private $process;
 
     /**
      * @param string $from
@@ -34,10 +47,14 @@ class CopyStep implements StepInterface
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         $processHypervisor->enqueue(
-            $executionContext->build(
-                new Command('copy', $this->from, $this->to)
+            $this->process = $executionContext->build(
+                $this->command = new Command('copy', $this->from, $this->to)
             )
         );
+
+        $this->registerProcess($this->process);
+
+        return $executionContext;
     }
 
     public static function fromConfig(array $config)

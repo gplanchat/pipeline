@@ -17,4 +17,8 @@ interface StepInterface
         ProcessHypervisorInterface $processHypervisor,
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface;
+
+    public function then(callable $callback): StepInterface;
+
+    public function otherwise(callable $callback): StepInterface;
 }

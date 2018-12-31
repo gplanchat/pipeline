@@ -6,9 +6,13 @@ use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use Kiboko\Component\Pipeline\Step\ThenableStepTrait;
+use React\ChildProcess\Process;
 
 class PHPUnitStep implements StepInterface
 {
+    use ThenableStepTrait;
+
     /**
      * @var string
      */
@@ -25,6 +29,21 @@ class PHPUnitStep implements StepInterface
     private $filter;
 
     /**
+     * @var string[]
+     */
+    private $resultFiles;
+
+    /**
+     * @var Command
+     */
+    private $command;
+
+    /**
+     * @var Process
+     */
+    private $process;
+
+    /**
      * @param string $path
      * @param string $bootstrap
      * @param string[] $filter
@@ -37,6 +56,7 @@ class PHPUnitStep implements StepInterface
         $this->path = $path;
         $this->bootstrap = $bootstrap;
         $this->filter = $filter;
+        $this->resultFiles = [];
     }
 
     public function run(
@@ -44,10 +64,19 @@ class PHPUnitStep implements StepInterface
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         $processHypervisor->enqueue(
-            $executionContext->build(
-                new Command(...$this->buildCommandArguments())
+            $this->process = $executionContext->build(
+                $this->command = new Command(...$this->buildCommandArguments())
             )
         );
+
+        $this->registerProcess($this->process);
+
+        $this->then(function($resultFiles) {
+            var_dump($resultFiles);
+            foreach ($resultFiles as $file) {
+                stream_copy_to_stream(fopen($file, 'r'), fopen('php://stdout', 'w'));
+            }
+        });
 
         return $executionContext;
     }
@@ -64,7 +93,7 @@ class PHPUnitStep implements StepInterface
             yield sprintf('--filter=%s', $filter);
         }
 
-        yield sprintf('--log-junit=%s.xml', uniqid('phpunit_'));
+        yield sprintf('--log-junit=%s', $this->resultFiles[] = tempnam(sys_get_temp_dir(), 'kiboko_phpunit_'));
 
         yield $this->path;
     }

@@ -4,9 +4,12 @@ namespace Kiboko\Component\Pipeline\Plumbing;
 
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
+use Kiboko\Component\Pipeline\Step\ThenableStepTrait;
 
 class StepGroup implements StepGroupInterface
 {
+    use ThenableStepTrait;
+
     /**
      * @var StepInterface[]
      */

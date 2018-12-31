@@ -6,13 +6,26 @@ use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use React\ChildProcess\Process;
 
 class PHPSpecStep implements StepInterface
 {
+    use ThenableStepTrait;
+
     /**
      * @var string
      */
     private $path;
+
+    /**
+     * @var Command
+     */
+    private $command;
+
+    /**
+     * @var Process
+     */
+    private $process;
 
     /**
      * @param string $path
@@ -27,10 +40,12 @@ class PHPSpecStep implements StepInterface
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         $processHypervisor->enqueue(
-            $executionContext->build(
-                new Command(...$this->buildCommandArguments())
+            $this->process = $executionContext->build(
+                $this->command = new Command(...$this->buildCommandArguments())
             )
         );
+
+        $this->registerProcess($this->process);
 
         return $executionContext;
     }

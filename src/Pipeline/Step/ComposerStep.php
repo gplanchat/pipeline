@@ -6,34 +6,40 @@ use Kiboko\Component\Pipeline\ExecutionContext\Command\Command;
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisorInterface;
 use Kiboko\Component\Pipeline\Plumbing\StepInterface;
+use React\ChildProcess\Process;
 
 class ComposerStep implements StepInterface
 {
+    use ThenableStepTrait;
+
+    /**
+     * @var string
+     */
+    private $composerCommand;
+
     /**
      * @var string
      */
     private $path;
 
     /**
-     * @var string
+     * @var Command
      */
-    private $bootstrap;
+    private $command;
 
     /**
-     * @var string[]
+     * @var Process
      */
-    private $filter;
+    private $process;
 
     /**
+     * @param string $composerCommand
      * @param string $path
-     * @param string $bootstrap
-     * @param string[] $filter
      */
-    public function __construct(string $path, string $bootstrap = null, array $filter = [])
+    public function __construct(string $composerCommand, ?string $path = null)
     {
+        $this->composerCommand = $composerCommand;
         $this->path = $path;
-        $this->bootstrap = $bootstrap;
-        $this->filter = $filter;
     }
 
     public function run(
@@ -41,37 +47,31 @@ class ComposerStep implements StepInterface
         ExecutionContextInterface $executionContext
     ): ExecutionContextInterface {
         $processHypervisor->enqueue(
-            $executionContext->build(
-                new Command(...$this->buildCommandArguments())
+            $this->process = $executionContext->build(
+                $this->command = new Command(...$this->buildCommandArguments())
             )
         );
+
+        $this->registerProcess($this->process);
 
         return $executionContext;
     }
 
     private function buildCommandArguments()
     {
-        yield 'phpunit';
+        yield 'composer';
+        yield $this->composerCommand;
 
-        if ($this->bootstrap !== null) {
-            yield sprintf('--botstrap=%s', $this->bootstrap);
+        if ($this->path !== null) {
+            yield sprintf('--working-dir=%s', $this->path);
         }
-
-        foreach ($this->filter as $filter) {
-            yield sprintf('--filter=%s', $filter);
-        }
-
-        yield sprintf('--log-junit=a.xml', uniqid('phpunit_'));
-
-        yield $this->path;
     }
 
     public static function fromConfig(array $config)
     {
         return new self(
-            $config['path'] ?? '.',
-            $config['bootstrap'] ?? null,
-            $config['filter'] ?? []
+            $config['command'] ?? 'install',
+            $config['path'] ?? null
         );
     }
 }
