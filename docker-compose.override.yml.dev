@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+  mail:
+    image: schickling/mailcatcher:latest
+    ports:
+      - 1080:1080
+
+  sql:
+    environment:
+      POSTGRES_PASSWORD: "password"
+
+  http:
+    image: kiboko/nginx:1.15-oroplatform-dev
+    ports:
+      - 8000:80
+
+  fpm:
+    image: kiboko/php:7.1-fpm-oroplatform-dev
+    volumes:
+      - pipeline-app-sync:/var/www/html:nocopy
+
+  ws:
+    image: kiboko/php:7.1-cli-oroplatform-dev
+    command: ["bin/console", "gos:websocket:server", "--env=prod"]
+    ports:
+      - 8080:8080
+    volumes:
+      - pipeline-app-sync:/var/www/html:nocopy
+
+  mq:
+    image: kiboko/php:7.1-cli-oroplatform-dev
+    command: ["bin/console", "oro:message-queue:consume", "--env=prod", "-vv"]
+    volumes:
+      - pipeline-app-sync:/var/www/html:nocopy
+
+  cli:
+    image: kiboko/php:7.1-cli-oroplatform-dev
+    volumes:
+      - pipeline-app-sync:/var/www/html:nocopy
+
+volumes:
+  pipeline-app-sync:
+    external: true
+

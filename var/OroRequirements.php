@@ -3,9 +3,8 @@
 
 require_once __DIR__ . '/../var/SymfonyRequirements.php';
 
-use Oro\Bundle\AssetBundle\NodeJsVersionChecker;
 use Oro\Bundle\InstallerBundle\Process\PhpExecutableFinder;
-use Oro\Bundle\AssetBundle\NodeJsExecutableFinder;
+use Oro\Bundle\RequireJSBundle\DependencyInjection\Configuration as RequireJSConfiguration;
 
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\Process\ProcessBuilder;
@@ -19,7 +18,6 @@ class OroRequirements extends SymfonyRequirements
     const REQUIRED_GD_VERSION   = '2.0';
     const REQUIRED_CURL_VERSION = '7.0';
     const REQUIRED_ICU_VERSION  = '3.8';
-    const REQUIRED_NODEJS_VERSION  = '>=6.6';
 
     const EXCLUDE_REQUIREMENTS_MASK = '/5\.[0-6]|7\.0/';
 
@@ -202,26 +200,12 @@ class OroRequirements extends SymfonyRequirements
             'Set the "<strong>memory_limit</strong>" setting in php.ini<a href="#phpini">*</a> to at least "512M".'
         );
 
-        $nodeJsExecutableFinder = new NodeJsExecutableFinder();
-        $nodeJsExecutable = $nodeJsExecutableFinder->findNodeJs();
-        $nodeJsExists = null !== $nodeJsExecutable;
-        $this->addOroRequirement(
-            $nodeJsExists,
-            $nodeJsExists ? 'NodeJS is installed' : 'NodeJS must be installed',
-            'Install <strong>NodeJS</strong>.'
-        );
+        $jsEngine = RequireJSConfiguration::getDefaultJsEngine();
 
-        $this->addOroRequirement(
-            NodeJsVersionChecker::satisfies($nodeJsExecutable, self::REQUIRED_NODEJS_VERSION),
-            sprintf('NodeJS "%s" version must be installed.', self::REQUIRED_NODEJS_VERSION),
-            sprintf('Upgrade <strong>NodeJS</strong> to "%s" version.', self::REQUIRED_NODEJS_VERSION)
-        );
-
-        $npmExists = null !== $nodeJsExecutableFinder->findNpm();
-        $this->addOroRequirement(
-            $npmExists,
-            $npmExists ? 'NPM is installed' : 'NPM must be installed',
-            'Install <strong>NPM</strong>.'
+        $this->addRecommendation(
+            $jsEngine ? true : false,
+            $jsEngine ? "A JS Engine ($jsEngine) is installed" : 'JSEngine such as NodeJS should be installed',
+            'Install <strong>JSEngine</strong>.'
         );
 
         $this->addOroRequirement(

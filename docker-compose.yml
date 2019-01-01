@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+  sql:
+    image: kiboko/postgres:9.6-oroplatform
+    environment:
+      POSTGRES_USER: "kiboko"
+      POSTGRES_DB: "kiboko"
+    restart: on-failure
+
+  http:
+    image: kiboko/nginx:1.15-oroplatform-prod
+    restart: on-failure
+
+  fpm:
+    image: kiboko/php:7.1-fpm-oroplatform-prod
+    user: docker:docker
+    restart: on-failure
+
+  ws:
+    image: kiboko/php:7.1-cli-oroplatform-prod
+    user: docker:docker
+    restart: on-failure
+
+  mq:
+    image: kiboko/php:7.1-cli-oroplatform-prod
+    user: docker:docker
+    restart: on-failure
+
+  cli:
+    image: kiboko/php:7.1-cli-oroplatform-prod
+    user: docker:docker
+    volumes:
+      - /home/kiboko/.composer:/opt/docker/.composer
+

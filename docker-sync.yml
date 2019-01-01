@@ -1,0 +1,48 @@
+version: "2"
+
+options:
+  compose-file-path: 'docker-compose.yml'
+  compose-dev-file-path: 'docker-compose.override.yml'
+
+syncs:
+  pipeline-app-sync:
+    src: './'
+    sync_excludes:
+      - ".git/*"
+      - "var/attachment/*"
+      - "var/cache/*"
+      - "var/import_export/*"
+      - "var/logs/*"
+      - "public/bundles/*"
+      - "public/media/*"
+      - "public/uploads/*"
+      - '.*/.git'
+      - '.*/node_modules'
+      - '.*/bower_components'
+      - '.*/sass-cache'
+      - '.*/.sass-cache'
+      - '.*/.sass-cache'
+      - '.coffee'
+      - '.scss'
+      - '.sass'
+      - '.gitignore'
+    watch_excludes:
+      - ".git/*"
+      - "var/attachment/*"
+      - "var/cache/*"
+      - "var/import_export/*"
+      - "var/logs/*"
+      - "public/bundles/*"
+      - "public/media/*"
+      - "public/uploads/*"
+      - '.*/.git'
+      - '.*/node_modules'
+      - '.*/bower_components'
+      - '.*/sass-cache'
+      - '.*/.sass-cache'
+      - '.*/.sass-cache'
+      - '.coffee'
+      - '.scss'
+      - '.sass'
+      - '.gitignore'
+    sync_userid: 1000

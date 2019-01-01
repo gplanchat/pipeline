@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  mail:
+    image: namshi/smtp:latest
+    environment:
+      RELAY_NETWORKS: ":192.168.0.0/24"
+      PORT: 1025
+
+  sql:
+    environment:
+      POSTGRES_PASSWORD: "password"
+
+  http:
+    ports:
+      - 8000:80
+
+  fpm:
+    volumes:
+      - app-sync:/var/www/html
+      
+  ws:
+    command: ["bin/console", "gos:websocket:server", "--env=prod"]
+    ports:
+      - 8080:8080
+    volumes:
+      - app-sync:/var/www/html
+
+  mq:
+    command: ["bin/console", "oro:message-queue:consume", "--env=prod", "-vv"]
+    volumes:
+      - app-sync:/var/www/html
+
+  cli:
+    volumes:
+      - app-sync:/var/www/html
+
+volumes:
+  app-sync:
+    driver: local
+    driver_opts:
+      source: .
