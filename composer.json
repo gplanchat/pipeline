@@ -26,8 +26,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "functional\\Kiboko\\Component\\Pipeline\\": "functional/Pipeline",
-            "functional\\Kiboko\\Component\\Phroovy\\": "functional/Phroovy"
+            "functional\\Kiboko\\Component\\Pipeline\\": "tests/functional/Pipeline",
+            "functional\\Kiboko\\Component\\Phroovy\\": "tests/functional/Phroovy"
         }
     },
     "repositories": {
@@ -41,7 +41,7 @@
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "ext-xmlreader": "*",
         "oro/platform": "3.1.0-rc@RC",
         "oro/platform-serialised-fields": "3.1.0-rc@RC"
@@ -53,6 +53,7 @@
         "behat/mink-selenium2-driver": "1.*",
         "behat/symfony2-extension": "2.1.*",
         "nelmio/alice": "2.3.*",
+        "phpunit/phpunit": "6.5.*",
         "johnkary/phpunit-speedtrap": "2.0.*",
         "mybuilder/phpunit-accelerator": "2.0.*",
         "squizlabs/php_codesniffer": "3.3.*",
@@ -62,8 +63,7 @@
         "symfony/phpunit-bridge": "3.4.*",
         "friendsofphp/php-cs-fixer": "2.12.*",
         "oro/twig-inspector": "1.0.*",
-        "phpspec/phpspec": "^3.0",
-        "phpunit/phpunit": "^6.5"
+        "phpspec/phpspec": "^3.0"
     },
     "config": {
         "component-dir": "public/bundles/components",
