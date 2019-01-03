@@ -12,7 +12,6 @@
     "require": {
         "php": "^7.1",
         "ext-xmlreader": "*",
-        "evenement/evenement": "^3.0",
         "react/promise": "^2.5",
         "react/child-process": "^0.5"
     },

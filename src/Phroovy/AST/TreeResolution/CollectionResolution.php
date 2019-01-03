@@ -48,9 +48,9 @@ class CollectionResolution implements TreeResolutionInterface
         $listNode = new Node\StaticValue\ListNode();
         while (true) {
             if ($this->staticValueFacade->assert($tokenStream)) {
-                $listNode[] = $this->staticValueFacade->create($tokenStream);
+                $listNode->push($this->staticValueFacade->create($tokenStream));
             } else if ($tokenStream->assert(...TokenConstraint::anyStringOrIdentifier())) {
-                $listNode[] = $tokenStream->consume()->value;
+                $listNode->push(new Node\StaticValue\StringNode($tokenStream->consume()->value));
             } else {
                 throw UnexpectedTokenException::unmatchedConstraints(
                     $tokenStream->watch(),
@@ -59,14 +59,14 @@ class CollectionResolution implements TreeResolutionInterface
                 );
             }
 
-            if ($tokenStream->assert(TokenConstraint::closingCurlyBraces())) {
+            if ($tokenStream->assert(TokenConstraint::closingSquareBracket())) {
                 break;
             }
 
             $tokenStream->expect(TokenConstraint::operator(','));
         }
 
-        $tokenStream->expect(TokenConstraint::closingCurlyBraces());
+        $tokenStream->expect(TokenConstraint::closingSquareBracket());
 
         return $listNode;
     }

@@ -10,6 +10,7 @@ use Kiboko\Component\Pipeline\Step\CommandStep;
 use Kiboko\Component\Pipeline\Step\CopyStep;
 use Kiboko\Component\PHPSpecPipeline\Step\PHPSpecStep;
 use Kiboko\Component\PHPUnitPipeline\Step\PHPUnitStep;
+use Kiboko\Component\Pipeline\Step\MakefileStep;
 
 class DemoStepBuilder implements StepBuilderInterface
 {
@@ -26,6 +27,9 @@ class DemoStepBuilder implements StepBuilderInterface
         if ($node->type === 'copy') {
             return CopyStep::fromConfig($node->arguments->toPHPValue());
         }
+        if ($node->type === 'make') {
+            return MakefileStep::fromConfig($node->arguments->toPHPValue());
+        }
         if ($node->type === 'phpunit') {
             $step = PHPUnitStep::fromConfig($node->arguments->toPHPValue());
 
@@ -36,7 +40,6 @@ class DemoStepBuilder implements StepBuilderInterface
                     foreach ($suiteIterator as $suite) {
                         printSuite($suite);
                     }
-                    break;
                 }
             });
 
