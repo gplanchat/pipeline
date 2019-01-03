@@ -3,7 +3,7 @@
 namespace Kiboko\Component\Pipeline\Processor;
 
 use Kiboko\Component\Pipeline\ExecutionContext\ExecutionContextInterface;
-use Kiboko\Component\Pipeline\ExecutionContext\ExecutionFailure\ExecutionFailureBuilder;
+use Kiboko\Component\Pipeline\ExecutionContext\ExecutionFailure\ExecutionFailureBuilderInterface;
 use Kiboko\Component\Pipeline\ExecutionContext\PipelineExecution;
 use Kiboko\Component\Pipeline\ExecutionContext\PipelineExecutionInterface;
 use Kiboko\Component\Pipeline\Hypervisor\ProcessHypervisor;
@@ -19,7 +19,7 @@ class InterruptibleProcessor implements ProcessorInterface
     private $processHypervisor;
 
     /**
-     * @var ExecutionFailureBuilder
+     * @var ExecutionFailureBuilderInterface
      */
     private $failureBuilder;
 
@@ -32,12 +32,12 @@ class InterruptibleProcessor implements ProcessorInterface
      * InterruptibleProcessor constructor.
      *
      * @param ProcessHypervisor $processHypervisor
-     * @param ExecutionFailureBuilder $failureBuilder
+     * @param ExecutionFailureBuilderInterface $failureBuilder
      * @param ExecutionCheckerInterface $checker
      */
     public function __construct(
         ProcessHypervisor $processHypervisor,
-        ExecutionFailureBuilder $failureBuilder,
+        ExecutionFailureBuilderInterface $failureBuilder,
         ?ExecutionCheckerInterface $checker = null
     ) {
         $this->processHypervisor = $processHypervisor;
