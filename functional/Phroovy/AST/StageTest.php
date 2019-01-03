@@ -134,4 +134,45 @@ PIPE_EOL;
 
         $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
     }
+
+    public function testStagesWithOneStepHavingComplexArguments()
+    {
+        $pipeline =<<<PIPE_EOL
+pipeline {
+    stages {
+        stage('Test') {
+            steps {
+                make {
+                    tasks: [ "init", "install" ],
+                    env: {
+                        LOREM: "ipsum",
+                        DOLOR: "sit amet"
+                    }
+                }
+            }
+        }
+    }
+}
+PIPE_EOL;
+
+        $lexer = new Lexer();
+        $tree = new Tree();
+
+        $expected = new AST\PipelineNode(new AST\StageCollectionNode([
+            new AST\StageNode('Test', new AST\StepCollectionNode([
+                new AST\StepNode('make', new AST\StaticValue\HashMapNode([
+                    'tasks' => new AST\StaticValue\ListNode([
+                        new AST\StaticValue\StringNode('init'),
+                        new AST\StaticValue\StringNode('install'),
+                    ]),
+                    'env' => new AST\StaticValue\HashMapNode([
+                        'LOREM' => new AST\StaticValue\StringNode('ipsum'),
+                        'DOLOR' => new AST\StaticValue\StringNode('sit amet'),
+                    ])
+                ]))
+            ])),
+        ]));
+
+        $this->assertTreeHasNode($expected, $this->firstElement($tree->compile($lexer->tokenize($pipeline))));
+    }
 }
