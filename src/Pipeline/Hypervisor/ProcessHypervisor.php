@@ -2,6 +2,7 @@
 
 namespace Kiboko\Component\Pipeline\Hypervisor;
 
+use Clue\React\Mq\Queue;
 use React\ChildProcess\Process;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
@@ -10,40 +11,68 @@ use React\Promise\ExtendedPromiseInterface;
 class ProcessHypervisor implements ProcessHypervisorInterface
 {
     /**
-     * @var int
+     * @var LoopInterface
      */
-    private $maxProcesses;
+    private $loop;
 
     /**
-     * @var Process[]
+     * @var Queue
      */
-    private $pendingProcesses;
+    private $queue;
 
     /**
-     * @var Process[]
+     * @param LoopInterface $loop
+     * @param int           $concurrency
+     * @param int|null      $processesLimit
      */
-    private $currentProcesses;
-
-    /**
-     * @param int $maxProcesses
-     */
-    public function __construct(int $maxProcesses = 1)
+    public function __construct(LoopInterface $loop, int $concurrency = 1, ?int $processesLimit = null)
     {
-        $this->maxProcesses = max($maxProcesses, 1);
-        $this->pendingProcesses = new \SplObjectStorage();
-        $this->currentProcesses = new \SplObjectStorage();
+        $this->loop = $loop;
+
+        $this->queue = new Queue(
+            max($concurrency, 1),
+            $processesLimit === null ? null : max($concurrency, 1),
+            function(Process $process) {
+                $process->start($this->loop);
+
+                $deferred = new Deferred();
+
+                $process->on('exit', function(int $exitCode, int $termSignal) use($deferred) {
+                    if ($exitCode === 0) {
+                        $deferred->resolve();
+                    } else {
+                        $deferred->reject(new \Exception(strtr(
+                            'The process terminated with code %code%, got signal %signal%.',
+                            [
+                                '%code%' => sprintf('%d', $exitCode),
+                                '%signal%' => $this->getSignalString($termSignal),
+                            ]
+                        )));
+                    }
+                });
+
+                return $deferred->promise();
+            }
+        );
     }
 
-    public function __destruct()
+    private function getSignalString(int $signalCode)
     {
-        if ($this->currentProcesses === null) {
-            return;
-        }
+        $signals = [
+            1 => 'SIGHUP',
+            2 => 'SIGINT',
+            3 => 'SIGQUIT',
+            4 => 'SIGILL',
+            6 => 'SIGABRT',
+            8 => 'SIGFPE',
+            9 => 'SIGKILL',
+            11 => 'SIGSEGV',
+            13 => 'SIGPIPE',
+            14 => 'SIGALRM',
+            15 => 'SIGTERM',
+        ];
 
-        /** @var Process $process */
-        foreach ($this->currentProcesses as $process) {
-            $process->close();
-        }
+        return $signals[$signalCode] ?? sprintf('%d', $signalCode);
     }
 
     /**
@@ -53,107 +82,6 @@ class ProcessHypervisor implements ProcessHypervisorInterface
      */
     public function enqueue(Process $process): ExtendedPromiseInterface
     {
-        $deferred = new Deferred();
-
-        $this->pendingProcesses->attach($process, $deferred);
-
-        return $deferred->promise();
-    }
-
-    /**
-     * @param int $processesToStart
-     *
-     * @return \SplObjectStorage
-     */
-    private function pickFromPendingProcesses(int $processesToStart): \SplObjectStorage
-    {
-        $newProcesses = new \SplObjectStorage();
-        foreach ($this->pendingProcesses as $process) {
-            $deferred = $this->pendingProcesses->offsetGet($process);
-            $newProcesses->attach($process, $deferred);
-
-            if (--$processesToStart <= 0) {
-                break;
-            }
-        }
-
-        $this->pendingProcesses->removeAll($newProcesses);
-
-        return $newProcesses;
-    }
-
-    /**
-     * @return \SplObjectStorage
-     */
-    private function probeAndPickStoppedProcesses(): \SplObjectStorage
-    {
-        $stoppedProcesses = new \SplObjectStorage();
-        foreach ($this->currentProcesses as $process) {
-            if ($process->isRunning()) {
-                continue;
-            }
-
-            /** @var Deferred $deferred */
-            $deferred = $this->currentProcesses->offsetGet($process);
-            $stoppedProcesses->attach($process, $deferred);
-
-            if ($process->isTerminated()) {
-                $deferred->reject($process->getTermSignal());
-            } else if ($process->isStopped()) {
-                $deferred->reject($process->getStopSignal());
-            } else {
-                $deferred->resolve();
-            }
-        }
-
-        $this->currentProcesses->removeAll($stoppedProcesses);
-
-        return $stoppedProcesses;
-    }
-
-    public function run(LoopInterface $loop): void
-    {
-        while ($this->count() > 0) {
-            $processesToStart = $this->maxProcesses - $this->currentProcesses->count();
-            if ($processesToStart > 0) {
-                $newProcesses = $this->pickFromPendingProcesses($processesToStart);
-                $this->startProcesses($loop, $newProcesses);
-
-                $this->currentProcesses->addAll($newProcesses);
-            }
-
-            $this->probeAndPickStoppedProcesses();
-        }
-    }
-
-    /**
-     * @param LoopInterface $loop
-     * @param Process[]|iterable $processes
-     */
-    private function startProcesses(LoopInterface $loop, iterable $processes): void
-    {
-        /** @var Process $process */
-        foreach ($processes as $process) {
-            try {
-                $process->start($loop);
-                $process->stdout->on('data', function($data) {
-                    file_put_contents('php://output', $data);
-                });
-            } catch (\RuntimeException $e) {
-                throw new UnhandledProcessException(
-                    'Could not start process.',
-                    $process,
-                    $e
-                );
-            }
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->pendingProcesses->count() + $this->currentProcesses->count();
+        return ($this->queue)($process);
     }
 }

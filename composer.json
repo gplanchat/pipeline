@@ -13,7 +13,9 @@
         "php": "^7.1",
         "ext-xmlreader": "*",
         "react/promise": "^2.5",
-        "react/child-process": "^0.5 || ^0.4"
+        "react/child-process": "^0.5 || ^0.4",
+        "symfony/http-foundation": "^3.4 || ^4.0",
+        "clue/mq-react": "dev-master"
     },
     "require-dev": {
         "phpspec/phpspec": "^3.0",
@@ -21,6 +23,8 @@
     },
     "autoload": {
         "psr-4": {
+            "App\\": "src/App",
+            "Kiboko\\Component\\GithubHook\\": "src/GithubHook",
             "Kiboko\\Component\\Pipeline\\": "src/Pipeline",
             "Kiboko\\Component\\PHPSpecPipeline\\": "src/PHPSpecPipeline",
             "Kiboko\\Component\\PHPUnitPipeline\\": "src/PHPUnitPipeline",
@@ -33,5 +37,6 @@
             "functional\\Kiboko\\Component\\Pipeline\\": "functional/Pipeline",
             "functional\\Kiboko\\Component\\Phroovy\\": "functional/Phroovy"
         }
-    }
+    },
+    "bin": ["bin/pipeline"]
 }

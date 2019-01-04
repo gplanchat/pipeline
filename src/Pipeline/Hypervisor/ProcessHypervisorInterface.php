@@ -2,12 +2,15 @@
 
 namespace Kiboko\Component\Pipeline\Hypervisor;
 
-use React\EventLoop\LoopInterface;
+use React\ChildProcess\Process;
+use React\Promise\ExtendedPromiseInterface;
 
-interface ProcessHypervisorInterface extends ProcessEnqueueInterface, \Countable
+interface ProcessHypervisorInterface
 {
     /**
-     * @param LoopInterface $loop
+     * @param Process $process
+     *
+     * @return ExtendedPromiseInterface
      */
-    public function run(LoopInterface $loop): void;
+    public function enqueue(Process $process): ExtendedPromiseInterface;
 }
